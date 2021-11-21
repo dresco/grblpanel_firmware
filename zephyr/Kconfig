@@ -1,0 +1,8 @@
+mainmenu "MYAPP"
+
+source "Kconfig.zephyr"
+config MYAPP_STM32
+  default y
+  bool
+    select USE_STM32_LL_GPIO
+    select USE_STM32_LL_TIM
