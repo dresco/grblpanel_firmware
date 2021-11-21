@@ -6,7 +6,7 @@ void main(void)
 {
     const struct device *i2c_dev;
     static uint8_t key_data[16]  = {0};
-    static int prev_encoder;
+    static uint32_t prev_encoder;
 
     printk("Hello World...! %s\n", CONFIG_BOARD);
 
@@ -21,7 +21,7 @@ void main(void)
     while (1) {
 
         //
-        // Keypad testing
+        // Keypad testing -- todo: abstract more of this away into wrapper functions
         //
         uint8_t event_count =  adp5589_get_event_count(i2c_dev);
 
@@ -40,7 +40,7 @@ void main(void)
         //
         // Encoder testing
         //
-        int encoder = quadrature_get_value();
+        uint32_t encoder = quadrature_get_value();
         if (encoder != prev_encoder)
             printk("Encoder value is: %d\r\n", encoder);
         prev_encoder = encoder;
