@@ -14,13 +14,13 @@ void main(void)
     LOG_INF("Hello World...! %s", CONFIG_BOARD);
 
     if (keypad_init()) {
-        LOG_ERR("Error initialising keypad device.");
+        LOG_ERR("Error initialising keypad device.%s", "");
     }
 
     quadrature_init();
 
     if (init_modbus_server()) {
-        LOG_ERR("Modbus RTU server initialization failed");
+        LOG_ERR("Modbus RTU server initialization failed.%s", "");
     }
 
     while (1) {
