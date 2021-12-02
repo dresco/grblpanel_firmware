@@ -25,6 +25,9 @@ int8_t  adp5589_get_event_count(const struct device *);
 #define ADP5589_ADDRESS                  0x34    // I2C Address
 #define ADP5589_ID                       0x10    // Manufacturer ID
 
+#define KEY_CODE(x)        (((x) & 0x7F) << 0)   // key identifier (strip out pressed state)
+#define KEY_PRESSED(x)       ((x & 0x80) != 0)   // key is pressed (pressed state only)
+
 //
 // Register address definitions
 //

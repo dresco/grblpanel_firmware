@@ -10,6 +10,6 @@
 //
 void     quadrature_init(void);
 void     quadrature_tim2_ll_init(void);
-uint32_t quadrature_get_value(void);
+uint16_t quadrature_get_value(uint8_t);
 
 #endif

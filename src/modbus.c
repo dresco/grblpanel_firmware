@@ -1,21 +1,41 @@
-#include <zephyr.h>
-#include <modbus.h>
+#include <main.h>
 
 #include <logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 static uint16_t holding_reg[8];
-static uint16_t input_reg[8];
+//static uint16_t input_reg[8];
 
 static int input_reg_rd(uint16_t addr, uint16_t *reg)
 {
-    if (addr >= ARRAY_SIZE(input_reg)) {
-        return -ENOTSUP;
-    }
+    // if (addr >= ARRAY_SIZE(input_reg)) {
+    //     return -ENOTSUP;
+    // }
 
-    *reg = input_reg[addr];
+    // *reg = input_reg[addr];
 
     LOG_INF("Input register read, addr %u", addr);
+
+    switch(addr) {
+        case IREG_ENCODER_1:
+            *reg = quadrature_get_value(1);
+            break;
+
+        case IREG_ENCODER_2:
+            *reg = quadrature_get_value(2);
+            break;
+
+        case IREG_KEYPAD_1:
+            *reg = keypad_get_value(1);
+            break;
+
+        case IREG_KEYPAD_2:
+            *reg = keypad_get_value(2);
+            break;
+
+        default:
+            return -ENOTSUP;
+    }
 
     return 0;
 }
@@ -56,15 +76,15 @@ const static struct modbus_iface_param server_param = {
     .mode = MODBUS_MODE_RTU,
     .server = {
         .user_cb = &mbs_cbs,
-        .unit_id = 10,
+        .unit_id = UNIT_ID,
     },
     .serial = {
-        .baud = 38400,
+        .baud = BAUD_RATE,
         .parity = UART_CFG_PARITY_NONE,
     },
 };
 
-int init_modbus_server(void)
+int modbus_init(void)
 {
     const char iface_name[] = {DT_PROP(DT_INST(0, zephyr_modbus_serial), label)};
     int iface;

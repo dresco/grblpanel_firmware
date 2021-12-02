@@ -3,7 +3,7 @@
 // These functions are using the STM32 LL APIs directly, setup code generated using the CubeMX IDE.
 //
 
-#include <quadrature.h>
+#include <main.h>
 
 void quadrature_init(void)
 {
@@ -50,7 +50,14 @@ void quadrature_tim2_ll_init(void)
     LL_TIM_EnableCounter(TIM2);
 }
 
-uint32_t quadrature_get_value(void)
+uint16_t quadrature_get_value(uint8_t instance)
 {
-    return LL_TIM_GetCounter(TIM2);
+    switch (instance) {
+        case 1:
+            return LL_TIM_GetCounter(TIM2);
+            break;
+
+        default:
+            return 0;
+    }
 }
