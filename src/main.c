@@ -4,7 +4,9 @@
 LOG_MODULE_REGISTER(panel, LOG_LEVEL_INF);
 
 // globals
-panel_keydata_1_t panel_keydata_1;
+panel_keydata_1_t   panel_keydata_1;
+panel_keydata_2_t   panel_keydata_2;
+panel_displaydata_t panel_displaydata;
 
 void main(void)
 {
@@ -31,7 +33,7 @@ void main(void)
         keypad_process_events();
 
         //
-        // Encoder testing - valuse for uart output only
+        // Encoder testing - values for uart output only
         //
         uint32_t encoder = quadrature_get_value(1);
         if (encoder != prev_encoder)

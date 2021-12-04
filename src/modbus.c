@@ -17,12 +17,20 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
     LOG_INF("Input register read, addr %u", addr);
 
     switch(addr) {
+        case IREG_DEBUG_1:
+        case IREG_DEBUG_2:
+            break;
+
         case IREG_ENCODER_1:
             *reg = quadrature_get_value(1);
             break;
 
         case IREG_ENCODER_2:
             *reg = quadrature_get_value(2);
+            break;
+
+        case 104:
+        case 105:
             break;
 
         case IREG_KEYPAD_1:
@@ -33,7 +41,18 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             *reg = keypad_get_value(2);
             break;
 
+        case 108:
+        case 109:
+        case 110:
+        case 111:
+        case 112:
+        case 113:
+        case 114:
+        case 115:
+            break;
+
         default:
+            LOG_ERR("Input register read, unssupported addr %u", addr);
             return -ENOTSUP;
     }
 
@@ -55,13 +74,58 @@ static int holding_reg_rd(uint16_t addr, uint16_t *reg)
 
 static int holding_reg_wr(uint16_t addr, uint16_t reg)
 {
-    if (addr >= ARRAY_SIZE(holding_reg)) {
-        return -ENOTSUP;
+    // if (addr >= ARRAY_SIZE(holding_reg)) {
+    //     return -ENOTSUP;
+    // }
+
+    // holding_reg[addr] = reg;
+
+    LOG_INF("Holding register write, addr %u, value %u", addr, reg);
+
+    switch(addr) {
+        case HREG_GRBL_STATE:
+            panel_displaydata.grbl_state = reg;
+            break;
+
+        case 101:
+            break;
+
+        case HREG_SPINDLE_SPEED:
+            panel_displaydata.spindle_speed = reg;
+            break;
+
+        case HREG_SPINDLE_POWER:
+            panel_displaydata.spindle_power = reg;
+            break;
+
+        case 104:
+            break;
+
+        // todo: figure out byte ordering...
+        case HREG_XPOS_LO:
+            panel_displaydata.x_pos.bytes[0] = reg & 0xFF; //low byte
+            panel_displaydata.x_pos.bytes[1] = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_XPOS_HI:
+            panel_displaydata.x_pos.bytes[2] = reg & 0xFF; //low byte
+            panel_displaydata.x_pos.bytes[3] = (reg >> 8) & 0xFF; //high byte
+
+            LOG_INF ("x_pos float: %f", panel_displaydata.x_pos.value);
+            LOG_INF ("x_pos array: %hhX:%hhX:%hhX:%hhX", panel_displaydata.x_pos.bytes[0], panel_displaydata.x_pos.bytes[1],
+                                                         panel_displaydata.x_pos.bytes[2], panel_displaydata.x_pos.bytes[3]);
+            //LOG_INF ("x_pos %u", panel_displaydata.x_pos.bytes[3]);
+            break;
+
+        case 107:
+        case 108:
+        case 109:
+        case 110:
+            break;
+
+        default:
+            return -ENOTSUP;
     }
-
-    holding_reg[addr] = reg;
-
-    LOG_INF("Holding register write, addr %u", addr);
 
     return 0;
 }

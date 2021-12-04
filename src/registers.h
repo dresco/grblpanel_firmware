@@ -118,3 +118,10 @@ typedef union {
     float   value;
     uint8_t bytes[4];
 } float32_data_t;
+
+typedef struct {
+    uint16_t       grbl_state;
+    uint16_t       spindle_speed;
+    uint16_t       spindle_power;
+    float32_data_t x_pos;
+} panel_displaydata_t;
