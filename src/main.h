@@ -1,4 +1,6 @@
 #include <zephyr.h>
+#include <drivers/display.h>
+#include <lvgl.h>
 
 #include <keypad.h>
 #include <modbus.h>
