@@ -34,6 +34,12 @@ uint16_t keypad_get_value(uint8_t instance)
         case 1:
             return panel_keydata_1.value;
 
+        case 2:
+            return panel_keydata_2.value;
+
+        case 3:
+            return panel_keydata_3.value;
+
         default:
             return 0;
     }
@@ -75,6 +81,34 @@ int keypad_process_events(void)
 
                 case KEY_CYCLESTART:
                     panel_keydata_1.cycle_start = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_JOG_STEP_X1:
+                    panel_keydata_3.jog_step_x1 = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_JOG_STEP_X10:
+                    panel_keydata_3.jog_step_x10 = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_JOG_STEP_X100:
+                    panel_keydata_3.jog_step_x100 = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_JOG_STEP_SMOOTH:
+                    panel_keydata_3.jog_step_smooth = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_MPG_AXIS_X:
+                    panel_keydata_1.mpg_axis_x = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_MPG_AXIS_Y:
+                    panel_keydata_1.mpg_axis_y = KEY_PRESSED(keydata);
+                    break;
+
+                case KEY_MPG_AXIS_Z:
+                    panel_keydata_1.mpg_axis_z = KEY_PRESSED(keydata);
                     break;
 
                 default:

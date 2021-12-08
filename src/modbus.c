@@ -14,7 +14,7 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
 
     // *reg = input_reg[addr];
 
-    LOG_INF("Input register read, addr %u", addr);
+    // LOG_INF("Input register read, addr %u", addr);
 
     switch(addr) {
         case IREG_DEBUG_1:
@@ -41,7 +41,10 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             *reg = keypad_get_value(2);
             break;
 
-        case 108:
+        case IREG_KEYPAD_3:
+            *reg = keypad_get_value(3);
+            break;
+
         case 109:
         case 110:
         case 111:
@@ -80,7 +83,7 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
 
     // holding_reg[addr] = reg;
 
-    LOG_INF("Holding register write, addr %u, value %u", addr, reg);
+    // LOG_INF("Holding register write, addr %u, value %u", addr, reg);
 
     switch(addr) {
         case HREG_GRBL_STATE:
@@ -98,7 +101,19 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
             panel_displaydata.spindle_power = reg;
             break;
 
-        case 104:
+        case HREG_OVERRIDES_1:
+            panel_displaydata.spindle_override = reg & 0xFF; // low byte
+            panel_displaydata.wcs = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_OVERRIDES_2:
+            panel_displaydata.feed_override = reg & 0xFF; //low byte
+            panel_displaydata.rapid_override = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_MPG_MODE:
+            panel_displaydata.jog_mode= reg & 0xFF; // low byte
+            panel_displaydata.mpg_mode = (reg >> 8) & 0xFF; //high byte
             break;
 
         // todo: figure out byte ordering...
@@ -110,17 +125,26 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
         case HREG_XPOS_HI:
             panel_displaydata.x_pos.bytes[2] = reg & 0xFF; //low byte
             panel_displaydata.x_pos.bytes[3] = (reg >> 8) & 0xFF; //high byte
-
-            LOG_INF ("x_pos float: %f", panel_displaydata.x_pos.value);
-            LOG_INF ("x_pos array: %hhX:%hhX:%hhX:%hhX", panel_displaydata.x_pos.bytes[0], panel_displaydata.x_pos.bytes[1],
-                                                         panel_displaydata.x_pos.bytes[2], panel_displaydata.x_pos.bytes[3]);
-            //LOG_INF ("x_pos %u", panel_displaydata.x_pos.bytes[3]);
             break;
 
-        case 107:
-        case 108:
-        case 109:
-        case 110:
+        case HREG_YPOS_LO:
+            panel_displaydata.y_pos.bytes[0] = reg & 0xFF; //low byte
+            panel_displaydata.y_pos.bytes[1] = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_YPOS_HI:
+            panel_displaydata.y_pos.bytes[2] = reg & 0xFF; //low byte
+            panel_displaydata.y_pos.bytes[3] = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_ZPOS_LO:
+            panel_displaydata.z_pos.bytes[0] = reg & 0xFF; //low byte
+            panel_displaydata.z_pos.bytes[1] = (reg >> 8) & 0xFF; //high byte
+            break;
+
+        case HREG_ZPOS_HI:
+            panel_displaydata.z_pos.bytes[2] = reg & 0xFF; //low byte
+            panel_displaydata.z_pos.bytes[3] = (reg >> 8) & 0xFF; //high byte
             break;
 
         default:

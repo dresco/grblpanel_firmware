@@ -27,12 +27,15 @@
 #define HREG_GRBL_STATE     100
 #define HREG_SPINDLE_SPEED  102
 #define HREG_SPINDLE_POWER  103
-#define HREG_XPOS_LO        105 // todo: figure out the byte ordering
-#define HREG_XPOS_HI        106
-#define HREG_YPOS_LO        107
-#define HREG_YPOS_HI        108
-#define HREG_ZPOS_LO        109
-#define HREG_ZPOS_HI        110
+#define HREG_OVERRIDES_1    104
+#define HREG_OVERRIDES_2    105
+#define HREG_MPG_MODE       106
+#define HREG_XPOS_LO        107 // todo: figure out the byte ordering
+#define HREG_XPOS_HI        108
+#define HREG_YPOS_LO        109
+#define HREG_YPOS_HI        110
+#define HREG_ZPOS_LO        111
+#define HREG_ZPOS_HI        112
 
 //function declarations
 int modbus_init(void);

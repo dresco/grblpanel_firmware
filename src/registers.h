@@ -120,8 +120,17 @@ typedef union {
 } float32_data_t;
 
 typedef struct {
-    uint16_t       grbl_state;
-    uint16_t       spindle_speed;
-    uint16_t       spindle_power;
+    uint16_t  grbl_state;
+    uint16_t  spindle_speed;
+    uint16_t  spindle_power;
+    uint8_t   spindle_override;
+    uint8_t   feed_override;
+    uint8_t   rapid_override;
+    uint8_t   wcs;
+    uint8_t   mpg_mode;
+    uint8_t   jog_mode;
+
     float32_data_t x_pos;
+    float32_data_t y_pos;
+    float32_data_t z_pos;
 } panel_displaydata_t;
