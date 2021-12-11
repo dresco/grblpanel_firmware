@@ -59,6 +59,8 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             return -ENOTSUP;
     }
 
+    keypad_reset_flags(); // allow queued events to be processed
+
     return 0;
 }
 

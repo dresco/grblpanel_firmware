@@ -50,7 +50,7 @@ void main(void)
 
         update_values();
         display_update();
-        k_msleep(10);
+        k_msleep(1000);
 
     }
 }
