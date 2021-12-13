@@ -26,50 +26,42 @@ void update_values(void);
 #define STATE_ESTOP         1 << 8 //!< EStop mode, reports and is mainly handled similar to alarm state
 #define STATE_TOOL_CHANGE   1 << 9 //!< Manual tool change, similar to #STATE_HOLD - but stops spindle and allows jogging.
 
-
 typedef enum {
     left,
     center,
     right
 } display_align_t;
 
-typedef struct {
-    uint8_t font_size;
-    uint16_t x_pos, y_pos, x_size, y_size;
-    display_align_t align;
-    lv_obj_t * obj;
-} display_item_t;
+typedef enum {
+    grbl_state = 0,
+    spindle_rpm,
+    spindle_pwr,
+    spindle_override,
+    feed_override,
+    rapid_override,
+    wcs,
+    mpg_mode,
+    jog_mode,
+    x_axis_label,
+    y_axis_label,
+    z_axis_label,
+    x_axis_pos,
+    y_axis_pos,
+    z_axis_pos,
+} display_fields_t;
 
 typedef struct {
-    display_item_t grbl_state;
-    display_item_t overrides;
-    display_item_t x_axis_label;
-    display_item_t x_axis_value;
-    display_item_t y_axis_label;
-    display_item_t y_axis_value;
-    display_item_t z_axis_label;
-    display_item_t z_axis_value;
-} display_fields_t;
+    lv_obj_t * obj;
+    display_align_t align;
+    uint8_t font_size;
+    uint16_t x_pos, y_pos;
+    uint16_t x_size, y_size;
+    char * init;
+} display_item_t;
 
 typedef struct {
     uint8_t id;
     char text[8];
 } display_text_t;
-
-
-// static display_text_t axis_names[] = {
-//     { .id = 0,          .text = "X:" },
-//     { .id = 1,          .text = "Y:" },
-//     { .id = 2,          .text = "Z:" },
-//     { .id = 3,          .text = "A:" },
-//     { .id = 4,          .text = "B:" }
-// };
-
-// static display_text_t jog_names[] = {
-//     { .id = 1,          .text = "x1" },
-//     { .id = 2,          .text = "x10" },
-//     { .id = 4,          .text = "x100" },
-//     { .id = 8,          .text = "smooth" }
-// };
 
 #endif

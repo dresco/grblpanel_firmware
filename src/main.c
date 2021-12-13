@@ -8,12 +8,9 @@ panel_keydata_1_t   panel_keydata_1;
 panel_keydata_2_t   panel_keydata_2;
 panel_keydata_3_t   panel_keydata_3;
 panel_displaydata_t panel_displaydata;
-//display_fields_t fields;
 
 void main(void)
 {
-    static uint32_t prev_encoder;
-
     LOG_INF("Hello World...! %s", CONFIG_BOARD);
 
     if (display_init()) {
@@ -24,33 +21,15 @@ void main(void)
         LOG_ERR("Error initialising keypad device.%s", "");
     }
 
-    quadrature_init();
-
     if (modbus_init()) {
         LOG_ERR("Modbus RTU server initialization failed.%s", "");
     }
 
+    quadrature_init();
+
     while (1) {
-
-        //
-        // Keypad testing - polling for events
-        // todo: interrupt driven notification
-        //
         keypad_process_events();
-
-        //
-        // Encoder testing - values for uart output only
-        //
-        uint32_t encoder = quadrature_get_value(1);
-        if (encoder != prev_encoder)
-            LOG_INF("Encoder value is: %d", encoder);
-        prev_encoder = encoder;
-
-        //panel_displaydata.x_pos.value++;
-
         update_values();
         display_update();
-        k_msleep(1000);
-
     }
 }

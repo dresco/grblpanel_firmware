@@ -7,7 +7,24 @@ LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 LV_FONT_DECLARE(VeraMono_24);
 LV_FONT_DECLARE(VeraMono_48);
 
-static display_fields_t fields;
+// Using C99 designated initializers (order does not have to match the display_fields_t enum)
+static display_item_t display_items[] = {
+    [grbl_state]       = { .x_pos = 0,   .y_pos = 0,    .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_rpm]      = { .x_pos = 0,   .y_pos = 50,   .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_pwr]      = { .x_pos = 0,   .y_pos = 75,   .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_override] = { .x_pos = 0,   .y_pos = 125,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [feed_override]    = { .x_pos = 0,   .y_pos = 150,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [rapid_override]   = { .x_pos = 0,   .y_pos = 175,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [wcs]              = { .x_pos = 0,   .y_pos = 225,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [mpg_mode]         = { .x_pos = 0,   .y_pos = 250,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [jog_mode]         = { .x_pos = 0,   .y_pos = 275,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [x_axis_label]     = { .x_pos = 170, .y_pos = 150,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "X:"},
+    [y_axis_label]     = { .x_pos = 170, .y_pos = 200,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "Y:"},
+    [z_axis_label]     = { .x_pos = 170, .y_pos = 250,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "Z:"},
+    [x_axis_pos]       = { .x_pos = 225, .y_pos = 150,  .x_size = 255,  .y_size = 50, .align = right, .font_size = 48, .init = ""},
+    [y_axis_pos]       = { .x_pos = 225, .y_pos = 200,  .x_size = 255,  .y_size = 50, .align = right, .font_size = 48, .init = ""},
+    [z_axis_pos]       = { .x_pos = 225, .y_pos = 250,  .x_size = 255,  .y_size = 50, .align = right, .font_size = 48, .init = ""},
+};
 
 const char * const axis_str[] =
 {
@@ -27,72 +44,92 @@ const char * const jog_str[] =
     [8] = "smooth",
 };
 
+const char * const state_str[] =
+{
+    [STATE_IDLE] = "Idle",
+    [STATE_ALARM] = "Alarm",
+    [STATE_CHECK_MODE] = "Check",
+    [STATE_HOMING] = "Home",
+    [STATE_CYCLE] = "Run",
+    [STATE_HOLD] = "Hold",
+    [STATE_JOG] = "Jog",
+    [STATE_SAFETY_DOOR] = "Door",
+    [STATE_SLEEP] = "Sleep",
+    [STATE_ESTOP] = "Alarm",
+    [STATE_TOOL_CHANGE] = "Tool",
+};
+
 void update_values()
 {
-    char buf[16];
+    // todo: syncronisation?
 
-    switch (panel_displaydata.grbl_state) {
-        case STATE_IDLE:
-            sprintf(buf, "Idle");
-            break;
+    // set all members to invalid data, so that first pass initialises all display fields
+    static panel_displaydata_t last_displaydata = {.grbl_state = 0xFFFF,
+                                                   .spindle_speed = 0xFFFF,
+                                                   .spindle_power = 0xFFFF,
+                                                   .spindle_override = 0xFF,
+                                                   .feed_override = 0xFF,
+                                                   .rapid_override = 0xFF,
+                                                   .wcs = 0xFF,
+                                                   .mpg_mode = 0xFF,
+                                                   .jog_mode = 0xFF,
+                                                   .x_pos.value = 0xFFFF,
+                                                   .y_pos.value = 0xFFFF,
+                                                   .z_pos.value = 0xFFFF,
+                                                   };
 
-        case STATE_CYCLE:
-            sprintf(buf, "Run");
-            break;
+    if (memcmp(&last_displaydata, &panel_displaydata, sizeof(last_displaydata))) {
+        // something has changed in the global display data register, check individual members
 
-        case STATE_HOLD:
-            sprintf(buf, "Hold");
-            break;
+        if (panel_displaydata.grbl_state != last_displaydata.grbl_state) {
+            lv_label_set_text_fmt(display_items[grbl_state].obj, "%s", state_str[panel_displaydata.grbl_state]);
+        }
 
-        case STATE_JOG:
-            sprintf(buf, "Jog");
-            break;
+        if (panel_displaydata.spindle_speed != last_displaydata.spindle_speed) {
+            lv_label_set_text_fmt(display_items[spindle_rpm].obj, "rpm:%6i", panel_displaydata.spindle_speed);
+        }
 
-        case STATE_HOMING:
-            sprintf(buf, "Home");
-            break;
+        if (panel_displaydata.spindle_power != last_displaydata.spindle_power) {
+            lv_label_set_text_fmt(display_items[spindle_pwr].obj, " kW:%6.2f", panel_displaydata.spindle_power);
+        }
 
-        case STATE_ESTOP:
-        case STATE_ALARM:
-            sprintf(buf, "Alarm");
-            break;
+        if (panel_displaydata.feed_override != last_displaydata.feed_override) {
+            lv_label_set_text_fmt(display_items[feed_override].obj, "f:%3i%%", panel_displaydata.feed_override);
+        }
 
-        case STATE_CHECK_MODE:
-            sprintf(buf, "Check");
-            break;
+        if (panel_displaydata.rapid_override != last_displaydata.rapid_override) {
+            lv_label_set_text_fmt(display_items[rapid_override].obj, "r:%3i%%", panel_displaydata.rapid_override);
+        }
 
-        case STATE_SAFETY_DOOR:
-            sprintf(buf, "Door");
-            break;
+        if (panel_displaydata.spindle_override != last_displaydata.spindle_override) {
+            lv_label_set_text_fmt(display_items[spindle_override].obj, "s:%3i%%", panel_displaydata.spindle_override);
+        }
 
-        case STATE_SLEEP:
-            sprintf(buf, "Sleep");
-            break;
+        if (panel_displaydata.wcs != last_displaydata.wcs) {
+            lv_label_set_text_fmt(display_items[wcs].obj, " wcs:G%2i", panel_displaydata.wcs+54);
+        }
 
-        case STATE_TOOL_CHANGE:
-            sprintf(buf, "Tool");
-            break;
+        if (panel_displaydata.mpg_mode != last_displaydata.mpg_mode) {
+            lv_label_set_text_fmt(display_items[mpg_mode].obj, "axis:%s", axis_str[panel_displaydata.mpg_mode]);
+        }
 
-        default:
-            sprintf(buf, "???");
-            break;
+        if (panel_displaydata.jog_mode != last_displaydata.jog_mode) {
+            lv_label_set_text_fmt(display_items[jog_mode].obj, " jog:%s", jog_str[panel_displaydata.jog_mode]);
+        }
+
+        if (panel_displaydata.x_pos.value != last_displaydata.x_pos.value) {
+            lv_label_set_text_fmt(display_items[x_axis_pos].obj, "%.3f", panel_displaydata.x_pos.value);
+        }
+        if (panel_displaydata.y_pos.value != last_displaydata.y_pos.value) {
+            lv_label_set_text_fmt(display_items[y_axis_pos].obj, "%.3f", panel_displaydata.y_pos.value);
+        }
+        if (panel_displaydata.z_pos.value != last_displaydata.z_pos.value) {
+            lv_label_set_text_fmt(display_items[z_axis_pos].obj, "%.3f", panel_displaydata.z_pos.value);
+        }
+
     }
 
-    lv_label_set_text_fmt(fields.grbl_state.obj, "%s", buf);
-
-    lv_label_set_text_fmt(fields.overrides.obj, "rpm:%6i\n kW:%6.2f\n\nf:%3i%%\nr:%3i%%\ns:%3i%%\n\nG%2i\naxis:%s\njog:%s", 
-                                                    panel_displaydata.spindle_speed,
-                                                    (float)panel_displaydata.spindle_power / 10.0,
-                                                    panel_displaydata.feed_override, 
-                                                    panel_displaydata.rapid_override,
-                                                    panel_displaydata.spindle_override,
-                                                    panel_displaydata.wcs+54,
-                                                    axis_str[panel_displaydata.mpg_mode],
-                                                    jog_str[panel_displaydata.jog_mode]);
-
-    lv_label_set_text_fmt(fields.x_axis_value.obj, "%.3f", panel_displaydata.x_pos.value);
-    lv_label_set_text_fmt(fields.y_axis_value.obj, "%.3f", panel_displaydata.y_pos.value);
-    lv_label_set_text_fmt(fields.z_axis_value.obj, "%.3f", panel_displaydata.z_pos.value);
+    memcpy(&last_displaydata, &panel_displaydata, sizeof(last_displaydata));
 }
 
 void item_create(display_item_t * item, char * value)
@@ -116,7 +153,7 @@ void item_create(display_item_t * item, char * value)
     lv_obj_set_size(item->obj, item->x_size, item->y_size);
 
     // useful for debugging label positions...
-     lv_obj_set_style_local_bg_opa(item->obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
+    // lv_obj_set_style_local_bg_opa(item->obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
     
     switch (item->font_size) {
         case 24:
@@ -129,7 +166,7 @@ void item_create(display_item_t * item, char * value)
             break;
     }
 
-    lv_label_set_text(item->obj, value);
+    lv_label_set_text(item->obj, item->init);
 }
 
 int display_init(void)
@@ -139,7 +176,7 @@ int display_init(void)
     display_dev = device_get_binding(CONFIG_LVGL_DISPLAY_DEV_NAME);
 
     if (display_dev == NULL) {
-            LOG_ERR("device not found.  Aborting test.");
+            LOG_ERR("Display device not found.");
             return 1;
     }
 
@@ -151,144 +188,9 @@ int display_init(void)
                            LV_THEME_DEFAULT_FONT_SUBTITLE, 
                            LV_THEME_DEFAULT_FONT_TITLE);
 
-    fields.grbl_state.x_pos = 0;
-    fields.grbl_state.y_pos = 0;
-    fields.grbl_state.x_size = 150;
-    fields.grbl_state.y_size = 25;
-    fields.grbl_state.align = left;
-    fields.grbl_state.font_size = 24;
-
-    fields.overrides.x_pos = 0;
-    fields.overrides.y_pos = 50;
-    fields.overrides.x_size =150;
-    fields.overrides.y_size = 270;
-    fields.overrides.align = left;
-    fields.overrides.font_size = 24;
-
-    fields.x_axis_label.x_pos = 170;
-    fields.x_axis_label.y_pos = 170;
-    fields.x_axis_label.x_size = 55;
-    fields.x_axis_label.y_size = 50;
-    fields.x_axis_label.align = right;
-    fields.x_axis_label.font_size = 48;
-
-    fields.y_axis_label.x_pos = 170;
-    fields.y_axis_label.y_pos = 220;
-    fields.y_axis_label.x_size = 55;
-    fields.y_axis_label.y_size = 50;
-    fields.y_axis_label.align = right;
-    fields.y_axis_label.font_size = 48;
-
-    fields.z_axis_label.x_pos = 170;
-    fields.z_axis_label.y_pos = 270;
-    fields.z_axis_label.x_size = 55;
-    fields.z_axis_label.y_size = 50;
-    fields.z_axis_label.align = right;
-    fields.z_axis_label.font_size = 48;
-
-    fields.x_axis_value.x_pos = 200;
-    fields.x_axis_value.y_pos = 170;
-    fields.x_axis_value.x_size = 280;
-    fields.x_axis_value.y_size = 50;
-    fields.x_axis_value.align = right;
-    fields.x_axis_value.font_size = 48;
-
-    fields.y_axis_value.x_pos = 200;
-    fields.y_axis_value.y_pos = 220;
-    fields.y_axis_value.x_size = 280;
-    fields.y_axis_value.y_size = 50;
-    fields.y_axis_value.align = right;
-    fields.y_axis_value.font_size = 48;
-
-    fields.z_axis_value.x_pos = 200;
-    fields.z_axis_value.y_pos = 270;
-    fields.z_axis_value.x_size = 280;
-    fields.z_axis_value.y_size = 50;
-    fields.z_axis_value.align = right;
-    fields.z_axis_value.font_size = 48;
-
-    item_create(&fields.grbl_state, "IDLE");
-    item_create(&fields.overrides, "");
-
-    item_create(&fields.x_axis_label, "X:");
-    item_create(&fields.y_axis_label, "Y:");
-    item_create(&fields.z_axis_label, "Z:");
-    
-    item_create(&fields.x_axis_value, "0.000");
-    item_create(&fields.y_axis_value, "0.000");
-    item_create(&fields.z_axis_value, "0.000");
-
-    // lv_obj_t *hello_world_label;
-    // hello_world_label = lv_label_create(lv_scr_act(), NULL);
-    // lv_label_set_text(hello_world_label, "Hello world!");
-    // lv_obj_align(hello_world_label, NULL, LV_ALIGN_IN_TOP_MID, 5, 5);
-
-    // lv_obj_t * cont;
-    // cont = lv_cont_create(lv_scr_act(), NULL);
-    // lv_obj_set_auto_realign(cont, true);                    /*Auto realign when the size changes*/
-    // lv_obj_align_mid(cont, NULL, LV_ALIGN_CENTER, 0, 0);    /*This parametrs will be sued when realigned*/
-    // lv_cont_set_fit(cont, LV_FIT_MAX);
-    // lv_cont_set_layout(cont, LV_LAYOUT_PRETTY_MID);
-
-
-    //lv_obj_t *labels[3];
-
-    // lv_theme_t * th = lv_theme_
-    // lv_theme_set_current(th);
-    
-    // fields.x_label = lv_label_create(lv_scr_act(), NULL);
-    // lv_obj_set_style_local_text_font(fields.x_label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &lv_font_montserrat_48);
-    // lv_obj_align(fields.x_label, NULL, LV_ALIGN_IN_TOP_LEFT, 200, 50);
-    // lv_label_set_align(fields.x_label, LV_LABEL_ALIGN_RIGHT);
-    // lv_label_set_text(fields.x_label, "X:");
-
-    // labels[1] = lv_label_create(lv_scr_act(), NULL);
-    // lv_obj_set_style_local_text_font(labels[1], LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &lv_font_montserrat_48);
-    // lv_obj_align(labels[1], NULL, LV_ALIGN_IN_TOP_LEFT, 200, 100);
-    // lv_label_set_align(labels[1], LV_LABEL_ALIGN_RIGHT);
-    // //lv_obj_align(labels[1], NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
-    // //lv_label_set_align(labels[1], LV_LABEL_ALIGN_CENTER);
-    // lv_label_set_text(labels[1], "Y:");
-
-    // labels[2] = lv_label_create(lv_scr_act(), NULL);
-    // lv_obj_set_style_local_text_font(labels[2], LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &lv_font_montserrat_48);
-    // lv_obj_align(labels[2], NULL, LV_ALIGN_IN_TOP_LEFT, 200, 150);
-    // lv_label_set_align(labels[2], LV_LABEL_ALIGN_RIGHT);
-    // //lv_obj_align(labels[2], NULL, LV_ALIGN_IN_BOTTOM_RIGHT, 0, 0);
-    // //lv_label_set_align(labels[2], LV_LABEL_ALIGN_CENTER);
-    // lv_label_set_text(labels[2], "Z:");
-
-    // static lv_style_t win_style;
-    // lv_style_copy(&win_style, &lv_style_transp);
-    // win_style.body.padding.inner = 20;
-
-    // static lv_obj_t *win;
-    // win = lv_win_create(lv_disp_get_scr_act(NULL), NULL);
-    // lv_win_set_title(win, "Hello!");
-    // // lv_win_set_style(win, LV_WIN_STYLE_CONTENT, &win_style);
-    // lv_win_add_btn(win, LV_SYMBOL_HOME);
-
-    // /*Set a layout for the window*/
-    // lv_obj_t *cont;
-    // cont = lv_win_get_content(win);
-    // lv_win_set_layout(win, LV_LAYOUT_GRID);
-
-    // lv_obj_t * headings_cont;
-    // headings_cont = lv_cont_create(lv_scr_act(), NULL);
-    // lv_obj_set_size(headings_cont, 100, 100);
-    // lv_obj_set_pos(headings_cont, 100, 100);
-    // lv_cont_set_fit(headings_cont, LV_FIT_MAX);
-    // lv_cont_set_layout(headings_cont, LV_LAYOUT_COLUMN_LEFT);
-
-    // /*Add labels*/
-    // const char * txts[] = {"X:", "Y:", "Z:", NULL};
-    // lv_obj_t *obj;
-    // uint8_t i;
-    // for(i = 0; txts[i]; i++) {
-    //     obj = lv_label_create(headings_cont, NULL);
-    //     lv_obj_set_style_local_text_font(obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &lv_font_montserrat_48);
-    //     lv_label_set_text(obj, txts[i]);
-    // }
+    for (int i = 0; i < ARRAY_SIZE(display_items); i++) {
+        item_create(&display_items[i], "");
+    }
 
     lv_task_handler();
     display_blanking_off(display_dev);
