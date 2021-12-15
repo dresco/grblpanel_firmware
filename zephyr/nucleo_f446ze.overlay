@@ -6,9 +6,17 @@
 
 #include <dt-bindings/display/ili9xxx.h>
 
+&dma2 {
+    status = "okay";
+};
+
 &spi1 {
         status = "okay";
         cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+
+        dmas = <&dma2 5 3 0x28440 0x03>,
+               <&dma2 2 3 0x28480 0x03>;
+        dma-names = "tx", "rx";
 
         ili9488@0 {
                 compatible = "ilitek,ili9488";
