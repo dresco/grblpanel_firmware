@@ -44,3 +44,14 @@
         status = "okay";
     };
 };
+
+&i2c1 {
+    label = "KEYPAD";
+};
+
+/ {
+    zephyr,user {
+        keyevent-gpios = <&gpiob 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+
+    };
+};

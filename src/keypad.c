@@ -2,9 +2,7 @@
 #include <keypad.h>
 
 #include <logging/log.h>
-LOG_MODULE_DECLARE(panel, LOG_LEVEL_DBG);
-
-const struct device *i2c_dev;
+LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 static uint8_t keydata_flags[11]; // bitmap of keycodes (1-88) that have already been processed
 
@@ -26,7 +24,7 @@ void keypad_reset_flags(void) {
 
 int keypad_init(void)
 {
-    if (adp5589_init(&i2c_dev) != 0) {
+    if (adp5589_init() != 0) {
         LOG_ERR("Error initialising ADP5589 device.");
         return 1;
     } else {
@@ -37,13 +35,13 @@ int keypad_init(void)
 
 int keypad_get_event_count(void)
 {
-    return adp5589_get_event_count(i2c_dev);
+    return adp5589_get_event_count();
 }
 
 int keypad_get_events(uint8_t *key_data, uint8_t event_count)
 {
     LOG_DBG("adp5589_get_register_values(): requesting %i entries..", event_count);
-    return adp5589_get_register_values(i2c_dev, ADP5589_ADR_FIFO10, key_data, event_count);
+    return adp5589_get_register_values(ADP5589_ADR_FIFO10, key_data, event_count);
 }
 
 uint16_t keypad_get_value(uint8_t instance)

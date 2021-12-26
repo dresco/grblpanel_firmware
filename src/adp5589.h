@@ -6,27 +6,29 @@
 #define __ADP5589_H__
 
 #include <drivers/i2c.h>
+#include <drivers/gpio.h>
 
 //
 // Function declarations
 //
-int8_t  adp5589_init(const struct device **);
-uint8_t adp5589_get_register_value(const struct device *, uint8_t);
-uint8_t adp5589_get_register_values(const struct device *, uint8_t, uint8_t *, uint8_t);
-void    adp5589_set_register_value(const struct device *, uint8_t, uint8_t);
-int8_t  adp5589_get_event_count(const struct device *);
+int8_t  adp5589_init(void);
+uint8_t adp5589_get_register_value(uint8_t);
+uint8_t adp5589_get_register_values(uint8_t, uint8_t *, uint8_t);
+void    adp5589_set_register_value(uint8_t, uint8_t);
+int8_t  adp5589_get_event_count(void);
 
 //
 // Helpder defines
 //
 
-#define PMOD_IOXP_J1                        0    // J1 port of PmodIOXP
-#define PMOD_IOXP_J2                        1    // J2 port of PmodIOXP
-#define ADP5589_ADDRESS                  0x34    // I2C Address
-#define ADP5589_ID                       0x10    // Manufacturer ID
+#define PMOD_IOXP_J1                           0    // J1 port of PmodIOXP
+#define PMOD_IOXP_J2                           1    // J2 port of PmodIOXP
+#define ADP5589_ADDRESS                     0x34    // I2C Address
+#define ADP5589_ID                          0x10    // Manufacturer ID
 
-#define KEY_CODE(x)        (((x) & 0x7F) << 0)   // key identifier (strip out pressed state)
-#define KEY_PRESSED(x)       ((x & 0x80) != 0)   // key is pressed (pressed state only)
+#define KEY_CODE(x)           (((x) & 0x7F) << 0)   // key identifier (strip out pressed state)
+#define KEY_PRESSED(x)          ((x & 0x80) != 0)   // key is pressed (pressed state only)
+#define KEY_PINMAP(x) ((1<<(x-1))|((1<<(x-1))-1))   // shift 1 into lower x bits (used for setting the pin config registers)
 
 //
 // Register address definitions

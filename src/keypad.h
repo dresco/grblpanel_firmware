@@ -7,19 +7,18 @@
 
 #include <adp5589.h>
 
-#define KEY_BUFFER_SIZE     16 // how many key events we can process
+// ADP5589 keycodes range from 1 to 88 if using full 8x11 matrix, the chosen keycode mappings
+// are dependent on the keypad layout in use, and are set in the appropriate header file
+//
+// Uncomment just one mapping below;
+#define KEYPAD_4X4
+// #define KEYPAD_5X5
 
-// ADP5589 keycodes range from 1 to 88 if using full 8x11 matrix
-#define KEY_STOP            1
-#define KEY_FEEDHOLD        2
-#define KEY_CYCLESTART      3
-#define KEY_JOG_STEP_X1     12
-#define KEY_JOG_STEP_X10    13
-#define KEY_JOG_STEP_X100   14
-#define KEY_JOG_STEP_SMOOTH 15
-#define KEY_MPG_AXIS_X      23
-#define KEY_MPG_AXIS_Y      24
-#define KEY_MPG_AXIS_Z      25
+#include <keypad_4x4.h>
+#include <keypad_5x5.h>
+#include <keypad_defaults.h>
+
+#define KEY_BUFFER_SIZE     16 // how many key events we can process
 
 // function protoypes
 int keypad_init(void);
