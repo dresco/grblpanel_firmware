@@ -1,0 +1,53 @@
+# Current pinouts for development boards
+
+## Nucleo F446ZE
+* PA0  - TIM2_CH1  - ENCODER_1
+* PA1  - TIM2_CH2  - ENCODER_1
+* PA4  - SPI1_CS   - DISPLAY
+* PA5  - SPI1_CLK  - DISPLAY
+* PA6  - SPI1_MISO - DISPLAY
+* PA7  - SPI1_MOSI - DISPLAY
+* PB8  - I2C1_SCL  - KEYPAD
+* PB9  - I2C1_SDA  - KEYPAD
+* PC6  - TIM3_CH1  - ENCODER_2
+* PC7  - TIM3_CH2  - ENCODER_2
+* PD5  - USART2_TX - MODBUS
+* PD6  - USART2_RX - MODBUS
+* PD14 - GPIO_OUT  - DISPLAY_RESET
+* PD15 - GPIO_OUT  - DISPLAY_CMD/DATA
+
+## BlackPill F411CE
+* PA0  - GPIO_IN   - USER PUSHBUTTON
+* PA2  - USART2_TX - MODBUS
+* PA3  - USART2_RX - MODBUS
+* PA4  - SPI1_CS   - DISPLAY
+* PA5  - SPI1_CLK  - DISPLAY
+* PA6  - SPI1_MISO - DISPLAY
+* PA7  - SPI1_MOSI - DISPLAY
+* PA9  - USART1_TX - CONSOLE
+* PA10 - USART1_RX - CONSOLE
+* PA11 - USB_DN    - USB
+* PA12 - USB_DP    - USB
+* PA13 - SWD_IO    - SWD
+* PA14 - SWD_CLK   - SWD
+* PA15 - TIM2_CH1  - ENCODER_1
+* PB2  - GPIO_IN   - BOOT1 PULLDOWN
+* PB3  - TIM2_CH2  - ENCODER_1
+* PB4  - TIM3_CH1  - ENCODER_2
+* PB5  - TIM3_CH2  - ENCODER_2
+* PB6  - TIM4_CH1  - ENCODER_3
+* PB7  - TIM4_CH2  - ENCODER_3
+* PB8  - I2C1_SCL  - KEYPAD
+* PB9  - I2C1_SDA  - KEYPAD
+* PB13 - GPIO_IN   - KEYPAD_EVENT
+* PB14 - GPIO_OUT  - DISPLAY_RESET
+* PB15 - GPIO_OUT  - DISPLAY_CMD/DATA
+* PC13 - GPIO_OUT  - USER LED
+* PC14 - OSC32_IN  - CLOCK
+* PC15 - OSC32_OUT - CLOCK
+
+Need LL support code for encoders, ifdef to support both boards...
+
+## Not yet connected
+IO expander data interrupt  
+Display backlight pwm via mosfet

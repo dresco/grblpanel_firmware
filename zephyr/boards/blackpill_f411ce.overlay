@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2020 Phytec Messtechnik GmbH
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <dt-bindings/display/ili9xxx.h>
+
+&dma2 {
+    status = "okay";
+};
+
+&spi1 {
+        status = "okay";
+        cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+
+        dmas = <&dma2 5 3 0x28440 0x03>,
+               <&dma2 2 3 0x28480 0x03>;
+        dma-names = "tx", "rx";
+
+        ili9488@0 {
+                compatible = "ilitek,ili9488";
+                label = "DISPLAY";
+                spi-max-frequency = <25000000>;
+                reg = <0>;
+                cmd-data-gpios = <&gpiob 15 (GPIO_ACTIVE_LOW)>;
+                reset-gpios = <&gpiob 14 (GPIO_ACTIVE_LOW)>;
+                pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB888>;
+                rotation = <270>;
+                frmctr1 = [a0 11];
+                pwctrl1 = [17 15];
+                pwctrl2 = [41];
+                pgamctrl = [00 03 09 08 16 0a 3f 78 4c 09 0a 08 16 1a 0f];
+                ngamctrl = [00 16 19 03 0f 05 32 45 46 04 0e 0d 35 37 0f];
+        };
+};
+
+&usart2 {
+    pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
+    status = "okay";
+    current-speed = <115200>;
+
+    modbus0 {
+        compatible = "zephyr,modbus-serial";
+        label = "MODBUS0";
+        status = "okay";
+    };
+};
+
+&usart1 {
+    status = "okay";
+    current-speed = <115200>;
+};
+
+&i2c1 {
+    label = "KEYPAD";
+};
+
+/ {
+    zephyr,user {
+        keyevent-gpios = <&gpiob 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+
+    };
+};
+
+// Below for USB CDC ACM console output, defaults to usart1...
+//
+/// {
+//    chosen {
+//            zephyr,console = &cdc_acm_uart0;
+//    };
+//};
+//
+//&usbotg_fs {
+//    cdc_acm_uart0: cdc_acm_uart0 {
+//        compatible = "zephyr,cdc-acm-uart";
+//        label = "CDC_ACM_0";
+//    };
+//};
+

@@ -11,6 +11,15 @@ panel_displaydata_t panel_displaydata;
 
 void main(void)
 {
+#ifdef CONFIG_USB_CDC_ACM
+    // Enable USB CDC ACM device for console output
+    const struct device *dev_usb;
+    dev_usb = DEVICE_DT_GET_ONE(zephyr_cdc_acm_uart);
+    if (dev_usb == NULL || usb_enable(NULL)) {
+        return;
+    }
+#endif
+
     LOG_INF("Hello World...! %s", CONFIG_BOARD);
 
     if (display_init()) {
