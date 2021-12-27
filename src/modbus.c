@@ -87,6 +87,9 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
 
     // LOG_INF("Holding register write, addr %u, value %u", addr, reg);
 
+    // Thread syncronisation
+    k_mutex_lock(&paneldata_mutex, K_FOREVER);
+
     switch(addr) {
         case HREG_GRBL_STATE:
             panel_displaydata.grbl_state = reg;
@@ -150,9 +153,11 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
             break;
 
         default:
+            k_mutex_unlock(&paneldata_mutex);
             return -ENOTSUP;
     }
 
+    k_mutex_unlock(&paneldata_mutex);
     return 0;
 }
 

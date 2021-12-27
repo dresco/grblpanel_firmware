@@ -10,6 +10,8 @@
 #include <usb/usb_device.h>
 #endif
 
+extern struct k_mutex paneldata_mutex;
+
 // global variable declarations
 extern panel_keydata_1_t   panel_keydata_1;
 extern panel_keydata_2_t   panel_keydata_2;

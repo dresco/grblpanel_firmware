@@ -118,8 +118,10 @@ int keypad_process_events(void)
     if (total_key_count) {
         uint8_t * pPending = &deferred_key_data[0];
 
+        // Thread syncronisation
+        k_mutex_lock(&paneldata_mutex, K_FOREVER);
+
         // insert key states into the global registers that are sent over modbus
-        // todo: add thread syncronisation?
         for (int i = 0; i < total_key_count; i++) {
 
             uint8_t keydata = working_key_data[i];
@@ -189,6 +191,9 @@ int keypad_process_events(void)
             }
 
         }
+
+        k_mutex_unlock(&paneldata_mutex);
+
         // calc the pending key count, and copy pending events (& count) to queued for next iteration
         queued_key_count = deferred_key_count;
         memcpy(queued_key_data, deferred_key_data, queued_key_count);

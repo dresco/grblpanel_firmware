@@ -9,8 +9,13 @@ panel_keydata_2_t   panel_keydata_2;
 panel_keydata_3_t   panel_keydata_3;
 panel_displaydata_t panel_displaydata;
 
+// mutex for accessing the global data structures
+struct k_mutex paneldata_mutex;
+
 void main(void)
 {
+    k_mutex_init(&paneldata_mutex);
+
 #ifdef CONFIG_USB_CDC_ACM
     // Enable USB CDC ACM device for console output
     const struct device *dev_usb;

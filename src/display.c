@@ -61,8 +61,6 @@ const char * const state_str[] =
 
 void update_values()
 {
-    // todo: syncronisation?
-
     // set all members to invalid data, so that first pass initialises all display fields
     static panel_displaydata_t last_displaydata = {.grbl_state = 0xFFFF,
                                                    .spindle_speed = 0xFFFF,
@@ -78,58 +76,64 @@ void update_values()
                                                    .z_pos.value = 0xFFFF,
                                                    };
 
-    if (memcmp(&last_displaydata, &panel_displaydata, sizeof(last_displaydata))) {
+    // Thread syncronisation
+    panel_displaydata_t local_displaydata;
+    k_mutex_lock(&paneldata_mutex, K_FOREVER);
+    memcpy(&local_displaydata, &panel_displaydata, sizeof(local_displaydata));
+    k_mutex_unlock(&paneldata_mutex);
+
+    if (memcmp(&last_displaydata, &local_displaydata, sizeof(last_displaydata))) {
         // something has changed in the global display data register, check individual members
 
-        if (panel_displaydata.grbl_state != last_displaydata.grbl_state) {
-            lv_label_set_text_fmt(display_items[grbl_state].obj, "%s", state_str[panel_displaydata.grbl_state]);
+        if (local_displaydata.grbl_state != last_displaydata.grbl_state) {
+            lv_label_set_text_fmt(display_items[grbl_state].obj, "%s", state_str[local_displaydata.grbl_state]);
         }
 
-        if (panel_displaydata.spindle_speed != last_displaydata.spindle_speed) {
-            lv_label_set_text_fmt(display_items[spindle_rpm].obj, "rpm:%6i", panel_displaydata.spindle_speed);
+        if (local_displaydata.spindle_speed != last_displaydata.spindle_speed) {
+            lv_label_set_text_fmt(display_items[spindle_rpm].obj, "rpm:%6i", local_displaydata.spindle_speed);
         }
 
-        if (panel_displaydata.spindle_power != last_displaydata.spindle_power) {
-            lv_label_set_text_fmt(display_items[spindle_pwr].obj, " kW:%6.2f", panel_displaydata.spindle_power);
+        if (local_displaydata.spindle_power != last_displaydata.spindle_power) {
+            lv_label_set_text_fmt(display_items[spindle_pwr].obj, " kW:%6.2f", local_displaydata.spindle_power);
         }
 
-        if (panel_displaydata.feed_override != last_displaydata.feed_override) {
-            lv_label_set_text_fmt(display_items[feed_override].obj, "f:%3i%%", panel_displaydata.feed_override);
+        if (local_displaydata.feed_override != last_displaydata.feed_override) {
+            lv_label_set_text_fmt(display_items[feed_override].obj, "f:%3i%%", local_displaydata.feed_override);
         }
 
-        if (panel_displaydata.rapid_override != last_displaydata.rapid_override) {
-            lv_label_set_text_fmt(display_items[rapid_override].obj, "r:%3i%%", panel_displaydata.rapid_override);
+        if (local_displaydata.rapid_override != last_displaydata.rapid_override) {
+            lv_label_set_text_fmt(display_items[rapid_override].obj, "r:%3i%%", local_displaydata.rapid_override);
         }
 
-        if (panel_displaydata.spindle_override != last_displaydata.spindle_override) {
-            lv_label_set_text_fmt(display_items[spindle_override].obj, "s:%3i%%", panel_displaydata.spindle_override);
+        if (local_displaydata.spindle_override != last_displaydata.spindle_override) {
+            lv_label_set_text_fmt(display_items[spindle_override].obj, "s:%3i%%", local_displaydata.spindle_override);
         }
 
-        if (panel_displaydata.wcs != last_displaydata.wcs) {
-            lv_label_set_text_fmt(display_items[wcs].obj, " wcs:G%2i", panel_displaydata.wcs+54);
+        if (local_displaydata.wcs != last_displaydata.wcs) {
+            lv_label_set_text_fmt(display_items[wcs].obj, " wcs:G%2i", local_displaydata.wcs+54);
         }
 
-        if (panel_displaydata.mpg_mode != last_displaydata.mpg_mode) {
-            lv_label_set_text_fmt(display_items[mpg_mode].obj, "axis:%s", axis_str[panel_displaydata.mpg_mode]);
+        if (local_displaydata.mpg_mode != last_displaydata.mpg_mode) {
+            lv_label_set_text_fmt(display_items[mpg_mode].obj, "axis:%s", axis_str[local_displaydata.mpg_mode]);
         }
 
-        if (panel_displaydata.jog_mode != last_displaydata.jog_mode) {
-            lv_label_set_text_fmt(display_items[jog_mode].obj, " jog:%s", jog_str[panel_displaydata.jog_mode]);
+        if (local_displaydata.jog_mode != last_displaydata.jog_mode) {
+            lv_label_set_text_fmt(display_items[jog_mode].obj, " jog:%s", jog_str[local_displaydata.jog_mode]);
         }
 
-        if (panel_displaydata.x_pos.value != last_displaydata.x_pos.value) {
-            lv_label_set_text_fmt(display_items[x_axis_pos].obj, "%.3f", panel_displaydata.x_pos.value);
+        if (local_displaydata.x_pos.value != last_displaydata.x_pos.value) {
+            lv_label_set_text_fmt(display_items[x_axis_pos].obj, "%.3f", local_displaydata.x_pos.value);
         }
-        if (panel_displaydata.y_pos.value != last_displaydata.y_pos.value) {
-            lv_label_set_text_fmt(display_items[y_axis_pos].obj, "%.3f", panel_displaydata.y_pos.value);
+        if (local_displaydata.y_pos.value != last_displaydata.y_pos.value) {
+            lv_label_set_text_fmt(display_items[y_axis_pos].obj, "%.3f", local_displaydata.y_pos.value);
         }
-        if (panel_displaydata.z_pos.value != last_displaydata.z_pos.value) {
-            lv_label_set_text_fmt(display_items[z_axis_pos].obj, "%.3f", panel_displaydata.z_pos.value);
+        if (local_displaydata.z_pos.value != last_displaydata.z_pos.value) {
+            lv_label_set_text_fmt(display_items[z_axis_pos].obj, "%.3f", local_displaydata.z_pos.value);
         }
 
     }
 
-    memcpy(&last_displaydata, &panel_displaydata, sizeof(last_displaydata));
+    memcpy(&last_displaydata, &local_displaydata, sizeof(last_displaydata));
 }
 
 void item_create(display_item_t * item, char * value)
