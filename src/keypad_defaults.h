@@ -57,4 +57,40 @@
 #define KEY_MPG_AXIS_Z      110
 #endif
 
+#ifndef KEY_MPG_AXIS_A
+#define KEY_MPG_AXIS_A      111
+#endif
+
+#ifndef KEY_JOG_X_P
+#define KEY_JOG_X_P         112
+#endif
+
+#ifndef KEY_JOG_X_N
+#define KEY_JOG_X_N         113
+#endif
+
+#ifndef KEY_JOG_Y_P
+#define KEY_JOG_Y_P         114
+#endif
+
+#ifndef KEY_JOG_Y_N
+#define KEY_JOG_Y_N         115
+#endif
+
+#ifndef KEY_JOG_Z_P
+#define KEY_JOG_Z_P         116
+#endif
+
+#ifndef KEY_JOG_Z_N
+#define KEY_JOG_Z_N         117
+#endif
+
+#ifndef KEY_JOG_A_P
+#define KEY_JOG_A_P         118
+#endif
+
+#ifndef KEY_JOG_A_N
+#define KEY_JOG_A_N         119
+#endif
+
 #endif

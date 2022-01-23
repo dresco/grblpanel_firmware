@@ -137,6 +137,10 @@ int keypad_process_events(void)
                         panel_keydata_1.stop = KEY_PRESSED(keydata);
                         break;
 
+                    case KEY_RESET:
+                        panel_keydata_1.reset = KEY_PRESSED(keydata);
+                        break;
+
                     case KEY_FEEDHOLD:
                         panel_keydata_1.feed_hold = KEY_PRESSED(keydata);
                         break;
@@ -171,6 +175,42 @@ int keypad_process_events(void)
 
                     case KEY_MPG_AXIS_Z:
                         panel_keydata_1.mpg_axis_z = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_MPG_AXIS_A:
+                        panel_keydata_1.mpg_axis_a = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_X_P:
+                        panel_keydata_3.jog_positive_x = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_X_N:
+                        panel_keydata_3.jog_negative_x = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_Y_P:
+                        panel_keydata_3.jog_positive_y = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_Y_N:
+                        panel_keydata_3.jog_negative_y = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_Z_P:
+                        panel_keydata_3.jog_positive_z = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_Z_N:
+                        panel_keydata_3.jog_negative_z = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_A_P:
+                        panel_keydata_3.jog_positive_a = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_JOG_A_N:
+                        panel_keydata_3.jog_negative_a = KEY_PRESSED(keydata);
                         break;
 
                     default:
