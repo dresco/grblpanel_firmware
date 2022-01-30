@@ -50,10 +50,15 @@ int8_t adp5589_init(void)
                                ADP5589_GENERAL_CFG_B_OSC_EN |
                                ADP5589_GENERAL_CFG_B_CORE_FREQ(ADP5589_GENERAL_CFG_B_CORE_FREQ_500KHZ));
 
-    // Enable matrix keypad decoding for the requested columns and rows (note: max of 8 without using C register)
 #if KEYPAD_ROWS && KEYPAD_COLS
-    adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_A, KEY_PINMAP(KEYPAD_ROWS));
-    adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_B, KEY_PINMAP(KEYPAD_COLS));
+    // Enable matrix keypad decoding for the requested columns and rows, up to 8 defined in A & B registers
+    adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_A, KEY_PINMAP(MIN(KEYPAD_ROWS, 8)));
+    adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_B, KEY_PINMAP(MIN(KEYPAD_COLS, 8)));
+
+    // Add support for the maximum of 11 columns, the last three column bits are set in the C register
+    if (KEYPAD_COLS > 8) {
+        adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_C, KEY_PINMAP(MIN(KEYPAD_COLS-8, 3)));
+    }
 #endif
 
 #ifdef KEYPAD_EVENT_INTERRUPT
