@@ -5,9 +5,11 @@
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 #define ZEPHYR_USER_NODE DT_PATH(zephyr_user)
-
+#if DT_NODE_HAS_PROP(ZEPHYR_USER_NODE, keyevent_gpios)
 const struct gpio_dt_spec keyevent =
         GPIO_DT_SPEC_GET(ZEPHYR_USER_NODE, keyevent_gpios);
+#define KEYPAD_EVENT_INTERRUPT
+#endif
 
 const struct device *i2c_dev;
 
@@ -23,8 +25,10 @@ int8_t adp5589_init(void)
         return -1;
     }
 
+#ifdef KEYPAD_EVENT_INTERRUPT
     // Configure the event interrupt pin
     gpio_pin_configure_dt(&keyevent, GPIO_INPUT);
+#endif
 
     // Configuration
     uint32_t i2c_cfg = I2C_SPEED_SET(I2C_SPEED_STANDARD) | I2C_MODE_MASTER;
@@ -52,8 +56,10 @@ int8_t adp5589_init(void)
     adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_B, KEY_PINMAP(KEYPAD_COLS));
 #endif
 
+#ifdef KEYPAD_EVENT_INTERRUPT
     // Enable the interrupt pin to signal keypad events available
     adp5589_set_register_value(ADP5589_ADR_INT_EN, ADP5589_INT_EN_EVENT_IEN);
+#endif
 
     return 0; // todo: check i2c return values
 }
@@ -94,6 +100,7 @@ void adp5589_set_register_value(uint8_t register_address, uint8_t register_value
 
 int8_t adp5589_get_event_count(void)
 {
+#ifdef KEYPAD_EVENT_INTERRUPT
     if (gpio_pin_get(keyevent.port, keyevent.pin)) {
         // Events available (note that the pin is defined as active low)
 
@@ -107,4 +114,8 @@ int8_t adp5589_get_event_count(void)
         // No pending events
         return 0;
     }
+#else
+    // Return the event count
+    return ADP5589_STATUS_EC(adp5589_get_register_value(ADP5589_ADR_STATUS));
+#endif
 }
