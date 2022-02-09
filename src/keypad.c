@@ -24,6 +24,11 @@ void keypad_reset_flags(void) {
 
 int keypad_init(void)
 {
+#ifdef KEYPAD_GPIO_MATRIX
+    // Initialise the GPIO keypad matrix
+    return 0;
+#else
+    // Initialise the ADP5589 I2C IO expander
     if (adp5589_init() != 0) {
         LOG_ERR("Error initialising ADP5589 device.");
         return 1;
@@ -31,17 +36,26 @@ int keypad_init(void)
         LOG_INF("ADP5589 initialised successfully.");
         return 0;
     }
+#endif
 }
 
 int keypad_get_event_count(void)
 {
+#ifdef KEYPAD_GPIO_MATRIX
+    return 0;
+#else
     return adp5589_get_event_count();
+#endif
 }
 
 int keypad_get_events(uint8_t *key_data, uint8_t event_count)
 {
+#ifdef KEYPAD_GPIO_MATRIX
+    return 0;
+#else
     LOG_DBG("adp5589_get_register_values(): requesting %i entries..", event_count);
     return adp5589_get_register_values(ADP5589_ADR_FIFO10, key_data, event_count);
+#endif
 }
 
 uint16_t keypad_get_value(uint8_t instance)
