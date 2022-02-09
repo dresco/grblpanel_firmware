@@ -29,8 +29,12 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             *reg = quadrature_get_value(2);
             break;
 
-        case 104:
-        case 105:
+        case IREG_ENCODER_3:
+            *reg = quadrature_get_value(3);
+            break;
+
+        case IREG_ENCODER_4:
+            *reg = quadrature_get_value(4);
             break;
 
         case IREG_KEYPAD_1:

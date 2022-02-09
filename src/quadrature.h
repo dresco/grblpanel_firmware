@@ -12,6 +12,7 @@ void     quadrature_init(void);
 void     quadrature_tim2_ll_init(void);
 void     quadrature_tim3_ll_init(void);
 void     quadrature_tim4_ll_init(void);
+void     quadrature_tim5_ll_init(void);
 uint16_t quadrature_get_value(uint8_t);
 
 #endif
