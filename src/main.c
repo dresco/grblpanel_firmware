@@ -45,5 +45,6 @@ void main(void)
         keypad_process_events();
         update_values();
         display_update();
+        k_yield();
     }
 }

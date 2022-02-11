@@ -5,6 +5,8 @@
 #include <quadrature.h>
 #include <registers.h>
 #include <display.h>
+#include <matrix.h>
+#include <utils.h>
 
 #ifdef CONFIG_USB_CDC_ACM
 #include <usb/usb_device.h>

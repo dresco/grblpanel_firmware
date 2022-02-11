@@ -6,17 +6,6 @@ LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 static uint8_t keydata_flags[11]; // bitmap of keycodes (1-88) that have already been processed
 
-// helper functions for testing and setting bits across arrays
-uint8_t test_bit( uint8_t A[],  uint8_t k )
-{
-    return ( (A[k/8] & (1 << (k%8) )) != 0 ) ;     
-}
-
-void  set_bit( uint8_t A[],  uint8_t k )
-{
-    A[k/8] |= 1 << (k%8);  // Set the bit at the k-th position in A[i]
-}
-
 void keypad_reset_flags(void) {
     // todo: synchronisation
     memset(keydata_flags, 0, ARRAY_SIZE(keydata_flags));
@@ -26,7 +15,13 @@ int keypad_init(void)
 {
 #ifdef KEYPAD_GPIO_MATRIX
     // Initialise the GPIO keypad matrix
-    return 0;
+    if (matrix_init() != 0) {
+        LOG_ERR("Error initialising GPIO keypad matrix.");
+        return 1;
+    } else {
+        LOG_INF("GPIO keypad matrix initialised successfully.");
+        return 0;
+    }
 #else
     // Initialise the ADP5589 I2C IO expander
     if (adp5589_init() != 0) {
@@ -42,7 +37,7 @@ int keypad_init(void)
 int keypad_get_event_count(void)
 {
 #ifdef KEYPAD_GPIO_MATRIX
-    return 0;
+    return matrix_get_event_count();
 #else
     return adp5589_get_event_count();
 #endif
@@ -51,7 +46,7 @@ int keypad_get_event_count(void)
 int keypad_get_events(uint8_t *key_data, uint8_t event_count)
 {
 #ifdef KEYPAD_GPIO_MATRIX
-    return 0;
+    return matrix_get_events(key_data, event_count);
 #else
     LOG_DBG("adp5589_get_register_values(): requesting %i entries..", event_count);
     return adp5589_get_register_values(ADP5589_ADR_FIFO10, key_data, event_count);
@@ -106,20 +101,20 @@ int keypad_process_events(void)
     new_key_count = keypad_get_event_count();
 
     if (new_key_count) {
-        LOG_DBG("%u new keyapd events waiting..", new_key_count);
+        LOG_DBG("%u new keypad events waiting..", new_key_count);
         // don't try and get any more data if already full of queued key events
         if (queued_key_count < KEY_BUFFER_SIZE) {
 
             // read new events into the working_key_data array, starting after any queued events, and taking care not to overflow
             int rc = keypad_get_events(&working_key_data[0]+queued_key_count, MIN(new_key_count, KEY_BUFFER_SIZE-queued_key_count));
-            LOG_DBG("Requested %u keypad events..", rc);
+            LOG_DBG("Got %u keypad events..", rc);
 
             // new keys only
             for (int i = queued_key_count; i < new_key_count; i++) {
                 if (working_key_data[i] & 0x80)
-                    LOG_INF("Key 0x%02X pressed..", (working_key_data[i] & 0x7F));
+                    LOG_INF("Key %02i pressed..", (working_key_data[i] & 0x7F));
                 else
-                    LOG_INF("Key 0x%02X released..", (working_key_data[i] & 0x7F));
+                    LOG_INF("Key %02i released..", (working_key_data[i] & 0x7F));
             }
         } else {
             LOG_DBG("Queued event buffer is full, no new data read..");
