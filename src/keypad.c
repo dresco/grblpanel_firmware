@@ -66,6 +66,9 @@ uint16_t keypad_get_value(uint8_t instance)
         case 3:
             return panel_keydata_3.value;
 
+        case 4:
+            return panel_keydata_4.value;
+
         default:
             return 0;
     }
@@ -220,6 +223,82 @@ int keypad_process_events(void)
 
                     case KEY_JOG_A_N:
                         panel_keydata_3.jog_negative_a = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_WCS_G54:
+                        panel_keydata_2.wcs_g54 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_WCS_G55:
+                        panel_keydata_2.wcs_g55 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_WCS_G56:
+                        panel_keydata_2.wcs_g56 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_WCS_G57:
+                        panel_keydata_2.wcs_g57 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_SET_ZERO_X:
+                        panel_keydata_2.zero_work_offset_x = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_SET_ZERO_Y:
+                        panel_keydata_2.zero_work_offset_y = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_SET_ZERO_Z:
+                        panel_keydata_2.zero_work_offset_z = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_SET_ZERO_A:
+                        panel_keydata_2.zero_work_offset_a = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_GOTO_ZERO_X:
+                        panel_keydata_2.move_to_zero_x = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_GOTO_ZERO_Y:
+                        panel_keydata_2.move_to_zero_y = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_GOTO_ZERO_Z:
+                        panel_keydata_2.move_to_zero_z = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_GOTO_ZERO_A:
+                        panel_keydata_2.move_to_zero_a = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_FUNCTION_F1:
+                        panel_keydata_1.function_f1 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_FUNCTION_F2:
+                        panel_keydata_1.function_f2 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_FUNCTION_F3:
+                        panel_keydata_1.function_f3 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_FUNCTION_F4:
+                        panel_keydata_1.function_f4 = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_FEED_RESET:
+                        panel_keydata_4.feed_override_reset = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_SPINDLE_RESET:
+                        panel_keydata_4.spindle_override_reset = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_RAPID_RESET:
+                        panel_keydata_4.rapid_override_100 = KEY_PRESSED(keydata);
                         break;
 
                     default:

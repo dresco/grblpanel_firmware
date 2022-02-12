@@ -7,6 +7,7 @@ LOG_MODULE_REGISTER(panel, LOG_LEVEL_INF);
 panel_keydata_1_t   panel_keydata_1;
 panel_keydata_2_t   panel_keydata_2;
 panel_keydata_3_t   panel_keydata_3;
+panel_keydata_4_t   panel_keydata_4;
 panel_displaydata_t panel_displaydata;
 
 // mutex for accessing the global data structures

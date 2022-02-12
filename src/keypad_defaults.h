@@ -93,4 +93,80 @@
 #define KEY_JOG_A_N         119
 #endif
 
+#ifndef KEY_WCS_G54
+#define KEY_WCS_G54         120
+#endif
+
+#ifndef KEY_WCS_G55
+#define KEY_WCS_G55         121
+#endif
+
+#ifndef KEY_WCS_G56
+#define KEY_WCS_G56         122
+#endif
+
+#ifndef KEY_WCS_G57
+#define KEY_WCS_G57         123
+#endif
+
+#ifndef KEY_SET_ZERO_X
+#define KEY_SET_ZERO_X      124
+#endif
+
+#ifndef KEY_SET_ZERO_Y
+#define KEY_SET_ZERO_Y      125
+#endif
+
+#ifndef KEY_SET_ZERO_Z
+#define KEY_SET_ZERO_Z      126
+#endif
+
+#ifndef KEY_SET_ZERO_A
+#define KEY_SET_ZERO_A      127
+#endif
+
+#ifndef KEY_GOTO_ZERO_X
+#define KEY_GOTO_ZERO_X     128
+#endif
+
+#ifndef KEY_GOTO_ZERO_Y
+#define KEY_GOTO_ZERO_Y     129
+#endif
+
+#ifndef KEY_GOTO_ZERO_Z
+#define KEY_GOTO_ZERO_Z     130
+#endif
+
+#ifndef KEY_GOTO_ZERO_A
+#define KEY_GOTO_ZERO_A     131
+#endif
+
+#ifndef KEY_FUNCTION_F1
+#define KEY_FUNCTION_F1     132
+#endif
+
+#ifndef KEY_FUNCTION_F2
+#define KEY_FUNCTION_F2     133
+#endif
+
+#ifndef KEY_FUNCTION_F3
+#define KEY_FUNCTION_F3     134
+#endif
+
+#ifndef KEY_FUNCTION_F4
+#define KEY_FUNCTION_F5     135
+#endif
+
+#ifndef KEY_FEED_RESET
+#define KEY_FEED_RESET      136
+#endif
+
+#ifndef KEY_SPINDLE_RESET
+#define KEY_SPINDLE_RESET   137
+#endif
+
+#ifndef KEY_RAPID_RESET
+#define KEY_RAPID_RESET     138
+#endif
+
 #endif

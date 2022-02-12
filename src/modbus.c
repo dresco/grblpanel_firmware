@@ -49,7 +49,10 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             *reg = keypad_get_value(3);
             break;
 
-        case 109:
+        case IREG_KEYPAD_4:
+            *reg = keypad_get_value(4);
+            break;
+
         case 110:
         case 111:
         case 112:
