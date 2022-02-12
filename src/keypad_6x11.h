@@ -27,6 +27,26 @@
 #define KEY_MPG_AXIS_Z      20
 #define KEY_MPG_AXIS_A      21
 
+#define KEY_WCS_G54         40
+#define KEY_WCS_G55         41
+#define KEY_WCS_G56         42
+#define KEY_WCS_G57         43
+
+#define KEY_SET_ZERO_X      45
+#define KEY_SET_ZERO_Y      46
+#define KEY_SET_ZERO_Z      47
+#define KEY_SET_ZERO_A      48
+
+#define KEY_GOTO_ZERO_X     56
+#define KEY_GOTO_ZERO_Y     57
+#define KEY_GOTO_ZERO_Z     58
+#define KEY_GOTO_ZERO_A     59
+
+#define KEY_FUNCTION_F1     62
+#define KEY_FUNCTION_F2     63
+#define KEY_FUNCTION_F3     64
+#define KEY_FUNCTION_F4     65
+
 #endif
 
 #endif
