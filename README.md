@@ -9,7 +9,6 @@ MSP3520 SPI TFT LCD display (ILI9488 driver) http://www.lcdwiki.com/3.5inch_SPI_
 **Software stack**  
 This project is using Zephyr as the development framework, configured as a PlatformIO project for easy setup & IDE integration.
 
-Zephyr provides native support for modbus and for the LVGL graphics library. However, it does not currently have driver support for STM2 timers in hardware quadrature encoder mode, or for the ADP5589 IO expander. The quadrature encoders are set up and accessed using the STM LL timer APIs, and a local driver has been implemented for the IO expander.
+Zephyr provides native support for modbus and for the LVGL graphics library. However, it does not currently have driver support for STM32 timers in hardware quadrature encoder mode, or for the ADP5589 IO expander. The quadrature encoders are set up and accessed using the STM LL timer APIs, and a local driver has been implemented for the IO expander.
 
 Using the **Bitstream Vera Sans Mono** TrueType font, converted for use with LVGL using https://lvgl.io/tools/fontconverter
-
