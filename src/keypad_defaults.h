@@ -17,8 +17,8 @@
 #define KEY_STOP            100
 #endif
 
-#ifndef KEY_RESET
-#define KEY_RESET           101
+#ifndef KEY_RESET1
+#define KEY_RESET1          101
 #endif
 
 #ifndef KEY_FEEDHOLD
@@ -154,7 +154,7 @@
 #endif
 
 #ifndef KEY_FUNCTION_F4
-#define KEY_FUNCTION_F5     135
+#define KEY_FUNCTION_F4     135
 #endif
 
 #ifndef KEY_FEED_RESET
@@ -167,6 +167,18 @@
 
 #ifndef KEY_RAPID_RESET
 #define KEY_RAPID_RESET     138
+#endif
+
+#ifndef KEY_HOME
+#define KEY_HOME            139
+#endif
+
+#ifndef KEY_UNLOCK
+#define KEY_UNLOCK          140
+#endif
+
+#ifndef KEY_RESET2
+#define KEY_RESET2          141
 #endif
 
 #endif

@@ -149,7 +149,8 @@ int keypad_process_events(void)
                         panel_keydata_1.stop = KEY_PRESSED(keydata);
                         break;
 
-                    case KEY_RESET:
+                    case KEY_RESET1:
+                    case KEY_RESET2:
                         panel_keydata_1.reset = KEY_PRESSED(keydata);
                         break;
 
@@ -159,6 +160,14 @@ int keypad_process_events(void)
 
                     case KEY_CYCLESTART:
                         panel_keydata_1.cycle_start = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_UNLOCK:
+                        panel_keydata_1.unlock = KEY_PRESSED(keydata);
+                        break;
+
+                    case KEY_HOME:
+                        panel_keydata_1.home = KEY_PRESSED(keydata);
                         break;
 
                     case KEY_JOG_STEP_X1:

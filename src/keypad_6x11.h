@@ -11,7 +11,11 @@
 
 #define KEY_CYCLESTART      11
 #define KEY_FEEDHOLD        22
-#define KEY_RESET           33
+#define KEY_RESET1          33
+
+#define KEY_HOME            63
+#define KEY_UNLOCK          64
+#define KEY_RESET2          65
 
 #define KEY_JOG_X_P         14
 #define KEY_JOG_X_N         12
@@ -36,20 +40,15 @@
 #define KEY_WCS_G56         42
 #define KEY_WCS_G57         43
 
-#define KEY_SET_ZERO_X      45
-#define KEY_SET_ZERO_Y      46
-#define KEY_SET_ZERO_Z      47
-#define KEY_SET_ZERO_A      48
+#define KEY_GOTO_ZERO_X     45
+#define KEY_GOTO_ZERO_Y     46
+#define KEY_GOTO_ZERO_Z     47
+#define KEY_GOTO_ZERO_A     48
 
-#define KEY_GOTO_ZERO_X     56
-#define KEY_GOTO_ZERO_Y     57
-#define KEY_GOTO_ZERO_Z     58
-#define KEY_GOTO_ZERO_A     59
-
-#define KEY_FUNCTION_F1     62
-#define KEY_FUNCTION_F2     63
-#define KEY_FUNCTION_F3     64
-#define KEY_FUNCTION_F4     65
+#define KEY_SET_ZERO_X      56
+#define KEY_SET_ZERO_Y      57
+#define KEY_SET_ZERO_Z      58
+#define KEY_SET_ZERO_A      59
 
 #define KEY_FEED_RESET      44
 #define KEY_SPINDLE_RESET   55
