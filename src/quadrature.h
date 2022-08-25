@@ -5,6 +5,9 @@
 #include <stm32f4xx_ll_gpio.h>
 #include <stm32f4xx_ll_bus.h>
 
+#define IC_PRESCALER    LL_TIM_ICPSC_DIV1
+#define IC_FILTER       LL_TIM_IC_FILTER_FDIV1_N2
+
 //
 // Function prototypes
 //
