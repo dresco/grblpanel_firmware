@@ -1,6 +1,6 @@
 #include <main.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 // helper functions for testing and setting bits across arrays

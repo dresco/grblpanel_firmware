@@ -1,7 +1,7 @@
 #include <main.h>
 #include <adp5589.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 #define ZEPHYR_USER_NODE DT_PATH(zephyr_user)

@@ -5,8 +5,8 @@
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
-#include <drivers/gpio.h>
-#include <sys/ring_buffer.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/ring_buffer.h>
 
 typedef struct {
     const char          *portname;

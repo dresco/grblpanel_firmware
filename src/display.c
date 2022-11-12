@@ -1,7 +1,7 @@
 #include <main.h>
 #include <display.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 LV_FONT_DECLARE(VeraMono_24);

@@ -5,7 +5,7 @@
 #ifndef __DISPLAY_H__
 #define __DISPLAY_H__
 
-#include <drivers/display.h>
+#include <zephyr/drivers/display.h>
 #include <lvgl.h>
 
 // function protoypes

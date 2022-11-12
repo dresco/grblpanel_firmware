@@ -2,7 +2,7 @@
 
 #ifdef KEYPAD_GPIO_MATRIX
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 #define STACKSIZE 1024    // Matrix processing thread stack size

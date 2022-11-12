@@ -1,7 +1,7 @@
 #include <main.h>
 #include <keypad.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
 static uint8_t keydata_flags[11]; // bitmap of keycodes (1-88) that have already been processed

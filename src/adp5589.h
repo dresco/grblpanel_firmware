@@ -5,8 +5,8 @@
 #ifndef __ADP5589_H__
 #define __ADP5589_H__
 
-#include <drivers/i2c.h>
-#include <drivers/gpio.h>
+#include <zephyr/drivers/i2c.h>
+#include <zephyr/drivers/gpio.h>
 
 //
 // Function declarations

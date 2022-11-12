@@ -1,6 +1,6 @@
 #include <main.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(panel, LOG_LEVEL_INF);
 
 // globals

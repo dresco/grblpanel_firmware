@@ -5,7 +5,7 @@
 #ifndef __MODBUS_H__
 #define __MODBUS_H__
 
-#include <modbus/modbus.h>
+#include <zephyr/modbus/modbus.h>
 
 #define BAUD_RATE       38400
 #define UNIT_ID         10

@@ -1,4 +1,4 @@
-#include <zephyr.h>
+#include <zephyr/kernel.h>
 
 #include <keypad.h>
 #include <modbus.h>

@@ -1,5 +1,13 @@
 Todo
 ----
+
+Zephyr 3.2 migration
+ - remove platformio configuration
+ - change folder structures & update code as needed
+ - update documentation as needed
+ - migrate quadrature encoder code to QDEC driver
+ - implement CAN bus support (for just F446 initially)
+
 Reference hw design
 
 Put protocol version into registers
@@ -17,6 +25,7 @@ GPIO keypad matrix
 
 Display
  - better formatting
+ - change spindle power to load %
 
 Done
 ----
