@@ -4,6 +4,9 @@
  * Opts: 
  ******************************************************************************/
 
+#include "display.h"
+
+#if PANEL_DISPLAY
 
 #include "lvgl.h"
 
@@ -1438,3 +1441,4 @@ lv_font_t VeraMono_48 = {
 
 #endif /*#if VERAMONO_48*/
 
+#endif // PANEL_DISPLAY

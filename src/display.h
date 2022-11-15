@@ -6,12 +6,21 @@
 #define __DISPLAY_H__
 
 #include <zephyr/drivers/display.h>
+
+#define DISPLAY_NODE DT_CHOSEN(zephyr_display)
+
+#if DT_NODE_EXISTS(DT_CHOSEN(zephyr_display))
+#define PANEL_DISPLAY       1
+#endif
+
+#if PANEL_DISPLAY
+
 #include <lvgl.h>
 
 // function protoypes
 int display_init(void);
 void display_update(void);
-void update_values(void);
+void display_update_values(void);
 
 // grbl states, from system.h
 #define STATE_IDLE          0      //!< Must be zero. No flags.
@@ -35,7 +44,7 @@ typedef enum {
 typedef enum {
     grbl_state = 0,
     spindle_rpm,
-    spindle_pwr,
+    spindle_load,
     spindle_override,
     feed_override,
     rapid_override,
@@ -64,4 +73,6 @@ typedef struct {
     char text[8];
 } display_text_t;
 
-#endif
+#endif // PANEL_DISPLAY
+
+#endif  // __DISPLAY_H__

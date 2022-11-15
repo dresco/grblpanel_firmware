@@ -1,5 +1,6 @@
 #include <main.h>
-#include <display.h>
+
+#if PANEL_DISPLAY
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
@@ -9,15 +10,15 @@ LV_FONT_DECLARE(VeraMono_48);
 
 // Using C99 designated initializers (order does not have to match the display_fields_t enum)
 static display_item_t display_items[] = {
-    [grbl_state]       = { .x_pos = 0,   .y_pos = 0,    .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [spindle_rpm]      = { .x_pos = 0,   .y_pos = 50,   .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [spindle_pwr]      = { .x_pos = 0,   .y_pos = 75,   .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [feed_override]    = { .x_pos = 0,   .y_pos = 125,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [spindle_override] = { .x_pos = 0,   .y_pos = 150,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [rapid_override]   = { .x_pos = 0,   .y_pos = 175,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [wcs]              = { .x_pos = 0,   .y_pos = 225,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [mpg_mode]         = { .x_pos = 0,   .y_pos = 250,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
-    [jog_mode]         = { .x_pos = 0,   .y_pos = 275,  .x_size = 150,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [grbl_state]       = { .x_pos = 0,   .y_pos = 0,    .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_rpm]      = { .x_pos = 0,   .y_pos = 50,   .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_load]     = { .x_pos = 0,   .y_pos = 75,   .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [feed_override]    = { .x_pos = 0,   .y_pos = 125,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [spindle_override] = { .x_pos = 0,   .y_pos = 150,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [rapid_override]   = { .x_pos = 0,   .y_pos = 175,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [wcs]              = { .x_pos = 0,   .y_pos = 225,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [mpg_mode]         = { .x_pos = 0,   .y_pos = 250,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
+    [jog_mode]         = { .x_pos = 0,   .y_pos = 275,  .x_size = 160,  .y_size = 25, .align = left,  .font_size = 24, .init = ""},
     [x_axis_label]     = { .x_pos = 170, .y_pos = 150,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "X:"},
     [y_axis_label]     = { .x_pos = 170, .y_pos = 200,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "Y:"},
     [z_axis_label]     = { .x_pos = 170, .y_pos = 250,  .x_size = 55,   .y_size = 50, .align = right, .font_size = 48, .init = "Z:"},
@@ -59,12 +60,12 @@ const char * const state_str[] =
     [STATE_TOOL_CHANGE] = "Tool",
 };
 
-void update_values()
+void display_update_values()
 {
     // set all members to invalid data, so that first pass initialises all display fields
     static panel_displaydata_t last_displaydata = {.grbl_state = 0xFFFF,
                                                    .spindle_speed = 0xFFFF,
-                                                   .spindle_power = 0xFFFF,
+                                                   .spindle_load = 0xFFFF,
                                                    .spindle_override = 0xFF,
                                                    .feed_override = 0xFF,
                                                    .rapid_override = 0xFF,
@@ -90,23 +91,23 @@ void update_values()
         }
 
         if (local_displaydata.spindle_speed != last_displaydata.spindle_speed) {
-            lv_label_set_text_fmt(display_items[spindle_rpm].obj, "rpm:%6i", local_displaydata.spindle_speed);
+            lv_label_set_text_fmt(display_items[spindle_rpm].obj, " rpm:%5i", local_displaydata.spindle_speed);
         }
 
-        if (local_displaydata.spindle_power != last_displaydata.spindle_power) {
-            lv_label_set_text_fmt(display_items[spindle_pwr].obj, " kW:%6.2f", local_displaydata.spindle_power);
+        if (local_displaydata.spindle_load != last_displaydata.spindle_load) {
+            lv_label_set_text_fmt(display_items[spindle_load].obj, "load:%5i%%", local_displaydata.spindle_load);
         }
 
         if (local_displaydata.feed_override != last_displaydata.feed_override) {
-            lv_label_set_text_fmt(display_items[feed_override].obj, "f:%3i%%", local_displaydata.feed_override);
+            lv_label_set_text_fmt(display_items[feed_override].obj, "   f:%3i%%", local_displaydata.feed_override);
         }
 
         if (local_displaydata.rapid_override != last_displaydata.rapid_override) {
-            lv_label_set_text_fmt(display_items[rapid_override].obj, "r:%3i%%", local_displaydata.rapid_override);
+            lv_label_set_text_fmt(display_items[rapid_override].obj, "   r:%3i%%", local_displaydata.rapid_override);
         }
 
         if (local_displaydata.spindle_override != last_displaydata.spindle_override) {
-            lv_label_set_text_fmt(display_items[spindle_override].obj, "s:%3i%%", local_displaydata.spindle_override);
+            lv_label_set_text_fmt(display_items[spindle_override].obj, "   s:%3i%%", local_displaydata.spindle_override);
         }
 
         if (local_displaydata.wcs != last_displaydata.wcs) {
@@ -138,33 +139,58 @@ void update_values()
 
 void item_create(display_item_t * item, char * value)
 {
-    item->obj = lv_label_create(lv_scr_act(), NULL);
-    lv_obj_align(item->obj, NULL, LV_ALIGN_IN_TOP_LEFT, item->x_pos, item->y_pos);
+    // v8 style settings...
+    static lv_style_t style_align_left;
+    lv_style_init(&style_align_left);
+    lv_style_set_text_align(&style_align_left, LV_TEXT_ALIGN_LEFT);
+
+    static lv_style_t style_align_center;
+    lv_style_init(&style_align_center);
+    lv_style_set_text_align(&style_align_center, LV_TEXT_ALIGN_CENTER);
+
+    static lv_style_t style_align_right;
+    lv_style_init(&style_align_right);
+    lv_style_set_text_align(&style_align_right, LV_TEXT_ALIGN_RIGHT);
+
+    static lv_style_t style_Vera24;
+    lv_style_init(&style_Vera24);
+    lv_style_set_text_font(&style_Vera24, &VeraMono_24); /* styles are just property-value pairs now, no state or part */
+
+    static lv_style_t style_Vera48;
+    lv_style_init(&style_Vera48);
+    lv_style_set_text_font(&style_Vera48, &VeraMono_48); /* styles are just property-value pairs now, no state or part */
+
+    static lv_style_t style_opa50;
+    lv_style_init(&style_opa50);
+    lv_style_set_bg_opa(&style_opa50, LV_OPA_50);
+
+    item->obj = lv_label_create(lv_scr_act());
+    lv_obj_align(item->obj, LV_ALIGN_OUT_TOP_LEFT, item->x_pos, item->y_pos);
 
     switch (item->align) {
         case right:
-            lv_label_set_align(item->obj, LV_LABEL_ALIGN_RIGHT);
+            lv_obj_add_style(item->obj, &style_align_right, LV_PART_MAIN);
             break;    
         case center:
-            lv_label_set_align(item->obj, LV_LABEL_ALIGN_CENTER);
+            lv_obj_add_style(item->obj, &style_align_center, LV_PART_MAIN);
             break;    
         case left:
-            lv_label_set_align(item->obj, LV_LABEL_ALIGN_LEFT);
+            lv_obj_add_style(item->obj, &style_align_left, LV_PART_MAIN);
             break;    
     }
 
-    lv_label_set_long_mode(item->obj, LV_LABEL_LONG_CROP);
+    lv_label_set_long_mode(item->obj, LV_LABEL_LONG_CLIP);
     lv_obj_set_size(item->obj, item->x_size, item->y_size);
 
     // useful for debugging label positions...
-    // lv_obj_set_style_local_bg_opa(item->obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-    
+    // lv_obj_add_style(item->obj, &style_opa50, LV_PART_MAIN);
+
     switch (item->font_size) {
         case 24:
-            lv_obj_set_style_local_text_font(item->obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &VeraMono_24);
+            lv_obj_add_style(item->obj, &style_Vera24, LV_PART_MAIN);
             break;
         case 48:
-            lv_obj_set_style_local_text_font(item->obj, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT,  &VeraMono_48);
+            lv_obj_add_style(item->obj, &style_Vera48, LV_PART_MAIN);
             break;
         default:
             break;
@@ -177,20 +203,11 @@ int display_init(void)
 {
     const struct device *display_dev;
 
-    display_dev = device_get_binding(CONFIG_LVGL_DISPLAY_DEV_NAME);
-
-    if (display_dev == NULL) {
-            LOG_ERR("Display device not found.");
-            return 1;
+    display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
+    if (!device_is_ready(display_dev)) {
+        LOG_ERR("Display device not found.");
+        return 1;
     }
-
-    lv_theme_material_init(LV_THEME_DEFAULT_COLOR_PRIMARY, 
-                           LV_THEME_DEFAULT_COLOR_SECONDARY, 
-                           LV_THEME_MATERIAL_FLAG_DARK,
-                           LV_THEME_DEFAULT_FONT_SMALL, 
-                           LV_THEME_DEFAULT_FONT_NORMAL, 
-                           LV_THEME_DEFAULT_FONT_SUBTITLE, 
-                           LV_THEME_DEFAULT_FONT_TITLE);
 
     for (int i = 0; i < ARRAY_SIZE(display_items); i++) {
         item_create(&display_items[i], "");
@@ -206,3 +223,5 @@ void display_update(void)
 {
     lv_task_handler();
 }
+
+#endif
