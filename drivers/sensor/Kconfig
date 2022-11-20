@@ -1,0 +1,4 @@
+# Copyright (c) 2022 Jon Escombe
+# SPDX-License-Identifier: MIT
+
+rsource "encoder_stm32/Kconfig"
