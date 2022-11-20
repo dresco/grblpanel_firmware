@@ -1,0 +1,19 @@
+identifier: grblpanel_g0b1re
+name: grblPANEL G0B1RE
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+ram: 144
+flash: 512
+supported:
+  - uart
+  - gpio
+  - i2c
+  - spi
+  - nvs
+  - dma
+  - usb_device
+  - lptim

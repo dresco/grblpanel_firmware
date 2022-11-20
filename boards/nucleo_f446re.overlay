@@ -1,0 +1,109 @@
+/*
+ * Copyright (c) 2020 Phytec Messtechnik GmbH
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+ #include <dt-bindings/display/ili9xxx.h>
+
+ &dma1 {
+     status = "okay";
+ };
+ 
+ &spi2 {
+         status = "okay";
+ 
+         cs-gpios = <&gpiob 12 GPIO_ACTIVE_LOW>;
+ 
+         pinctrl-0 = < &spi2_sck_pb13
+                       &spi2_miso_pb14
+                       &spi2_mosi_pb15>;
+         pinctrl-names = "default";
+
+        //  dmas = <&dma1 4 0 0x28440 0x03>,
+        //         <&dma1 3 0 0x28480 0x03>;
+        //  dma-names = "tx", "rx";
+ 
+         ili9488: ili9488@0 {
+                 compatible = "ilitek,ili9488";
+                 label = "DISPLAY";
+                 spi-max-frequency = <25000000>;
+                 reg = <0>;
+                 cmd-data-gpios = <&gpioc 12 (GPIO_ACTIVE_LOW)>;
+                 reset-gpios = <&gpioc 11 (GPIO_ACTIVE_LOW)>;
+                 pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB888>;
+                 height = <320>;
+                 width = <480>;
+                 rotation = <90>;
+                 frmctr1 = [a0 11];
+                 pwctrl1 = [17 15];
+                 pwctrl2 = [41];
+                 pgamctrl = [00 03 09 08 16 0a 3f 78 4c 09 0a 08 16 1a 0f];
+                 ngamctrl = [00 16 19 03 0f 05 32 45 46 04 0e 0d 35 37 0f];
+         };
+ };
+
+&usart1 {
+    status = "okay";
+
+    pinctrl-0 = < &usart1_tx_pa9
+                  &usart1_rx_pa10 >;
+
+    modbus0 {
+        compatible = "zephyr,modbus-serial";
+        //label = "MODBUS0";
+        status = "okay";
+    };
+};
+
+&i2c1 {
+    status = "okay";
+};
+
+// &can1 {
+//     status = "okay";
+// };
+
+&timers2 {
+    status = "okay";
+
+    encoder1: encoder1 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim2_ch1_pa0 &tim2_ch2_pa1>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+&timers3 {
+    status = "okay";
+
+    encoder2: encoder2 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim3_ch1_pa6 &tim3_ch2_pa7>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+/ {
+    // note the zephyr lvgl libraries expect a 'chosen' display
+    chosen {
+        zephyr,display = &ili9488;
+    };
+
+    aliases {
+        //my-canbus = &can1;
+        my-encoder1 = &encoder1;
+        my-encoder2 = &encoder2;
+        //my-modbus = &modbus0;
+    };
+};

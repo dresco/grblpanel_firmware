@@ -1,0 +1,177 @@
+/*
+ * Copyright (c) 2020 Phytec Messtechnik GmbH
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+ #include <zephyr/dt-bindings/sensor/qdec_stm32.h>
+ #include <zephyr/dt-bindings/clock/stm32g0_clock.h>
+ #include <dt-bindings/display/ili9xxx.h>
+
+ &dma1 {
+     status = "okay";
+ };
+
+ &dmamux1 {
+    status = "okay";
+};
+ 
+ &spi2 {
+         status = "okay";
+ 
+         cs-gpios = <&gpiob 10 GPIO_ACTIVE_LOW>;
+ 
+         pinctrl-0 = < &spi2_sck_pb13
+                       &spi2_miso_pb14
+                       &spi2_mosi_pb15>;
+         pinctrl-names = "default";
+
+         dmas = <&dmamux1 0 19 0x28440>,
+                <&dmamux1 1 18 0x28480>;
+         dma-names = "tx", "rx";
+ 
+         ili9488: ili9488@0 {
+                 compatible = "ilitek,ili9488";
+                 label = "DISPLAY";
+                 spi-max-frequency = <12000000>;
+                 reg = <0>;
+                 cmd-data-gpios = <&gpioc 12 (GPIO_ACTIVE_LOW)>;
+                 reset-gpios = <&gpioc 11 (GPIO_ACTIVE_LOW)>;
+                 pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB888>;
+                 height = <320>;
+                 width = <480>;
+                 rotation = <90>;
+                 frmctr1 = [a0 11];
+                 pwctrl1 = [17 15];
+                 pwctrl2 = [41];
+                 pgamctrl = [00 03 09 08 16 0a 3f 78 4c 09 0a 08 16 1a 0f];
+                 ngamctrl = [00 16 19 03 0f 05 32 45 46 04 0e 0d 35 37 0f];
+         };
+ };
+
+&timers1 {
+    status = "okay";
+
+    encoder1: encoder1 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pa9>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+&timers3 {
+    status = "okay";
+
+    encoder2: encoder2 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim3_ch1_pa6 &tim3_ch2_pa7>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+// https://medium.com/home-wireless/using-a-pwm-device-in-zephyr-7100d089f15c
+
+&timers14 {
+    st,prescaler = <10000>;
+    status = "okay";
+    pwm14: pwm {
+        status = "okay";
+        pinctrl-0 = <&tim14_ch1_pb1>;
+        pinctrl-names = "default";
+    };
+};
+ /{
+    // aliases {
+    //     pwmsound = &pwm_dev0;
+    // };
+    pwmdevs {
+        compatible = "pwm-leds";
+        pwm_dev0: pwm_dev_0 {
+            pwms=<&pwm14 0 100000 PWM_POLARITY_NORMAL>;
+        };
+    };
+ };
+
+
+// &timers15 {
+//  st,prescaler = <10000>;
+//  status = "okay";
+//  pwm15: pwm {
+//      status = "okay";
+//      pinctrl-0 = <&tim15_ch1_pb14>;
+//      pinctrl-names = "default";
+//  };
+// };
+
+// / {
+//   can {
+//     compatible = "bosch,m-can-base";
+//     #address-cells = <1>;
+//     #size-cells = <1>;
+//     std-filter-elements = <28>;
+//     ext-filter-elements = <8>;
+//     rx-fifo0-elements = <3>;
+//     rx-fifo1-elements = <3>;
+//     rx-buffer-elements = <0>;
+//     tx-buffer-elements = <3>;
+
+//     can1: can@40006400 {
+//         compatible = "st,stm32-fdcan";
+//         #address-cells = <1>;
+//         #size-cells = <0>;
+//         reg = <0x40006400 0x400>, <0x4000B400 0x350>;
+//         reg-names = "m_can", "message_ram";
+//         clocks = <&rcc STM32_CLOCK_BUS_AHB1_0x00000100>;
+//         interrupts = <21 0>, <22 0>;
+//         interrupt-names = "LINE_0", "LINE_1";
+//         status = "disabled";
+//         sjw = <1>;
+//         sample-point = <875>;
+//         sjw-data = <1>;
+//         sample-point-data = <875>;
+//     };
+
+// //     can1: can@4000a000 {
+// //         compatible = "st,stm32h7-fdcan";
+// //         #address-cells = <1>;
+// //         #size-cells = <0>;
+// //         reg = <0x4000a000 0x400>, <0x4000ac00 0x350>;
+// //         reg-names = "m_can", "message_ram";
+// //         clocks = <&rcc STM32_CLOCK_BUS_APB1_2 0x00000100>;
+// //         interrupts = <19 0>, <21 0>, <63 0>;
+// //         interrupt-names = "LINE_0", "LINE_1", "CALIB";
+// //         status = "disabled";
+// //         sjw = <1>;
+// //         sample-point = <875>;
+// //         sjw-data = <1>;
+// //         sample-point-data = <875>;
+// //   };
+// };
+
+//&can1 {
+//    status = "okay";
+//}
+
+// / {
+//     // note the zephyr libraries expect a 'chosen' display
+//     aliases {
+//         my-canbus = &can1;
+//     };
+// };
+
+
+/ {
+    chosen {
+        zephyr,display = &ili9488;
+    };
+};

@@ -1,0 +1,154 @@
+/*
+ * Copyright (c) 2020 Thomas Stranger
+ * Copyright (c) 2023 Jon Escombe
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <st/g0/stm32g0b1Xe.dtsi>
+#include <st/g0/stm32g0b1r(b-c-e)tx-pinctrl.dtsi>
+
+/ {
+    model = "grblPANEL STM32G0B1RE board";
+    compatible = "dresco,grblpanel-g01b1re";
+
+    chosen {
+        zephyr,console = &usart6;
+        zephyr,shell-uart = &usart6;
+        zephyr,uart-mcumgr = &usart6;
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+        zephyr,code-partition = &slot0_partition;
+        zephyr,canbus = &can1;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        green_led_1: led_1 {
+            gpios = <&gpiob 0 GPIO_ACTIVE_LOW>;
+            label = "User LD1";
+        };
+    };
+
+    aliases {
+        led0 = &green_led_1;
+        watchdog0 = &iwdg;
+    die-temp0 = &die_temp;
+    };
+};
+
+&clk_lsi {
+    status = "okay";
+};
+
+&clk_hsi {
+    status = "okay";
+};
+
+&clk_hsi48 {
+    status = "okay";
+};
+
+&clk_hse {
+    clock-frequency = <DT_FREQ_M(8)>;
+    status = "okay";
+};
+
+&pll {
+    div-m = <1>;
+    mul-n = <8>;
+    div-p = <2>;
+    div-q = <2>;
+    div-r = <2>;
+    clocks = <&clk_hsi>;
+    status = "okay";
+};
+
+&rcc {
+    clocks = <&pll>;
+    clock-frequency = <DT_FREQ_M(64)>;
+    ahb-prescaler = <1>;
+    apb1-prescaler = <1>;
+};
+
+zephyr_udc0: &usb {
+    pinctrl-0 = <&usb_dm_pa11 &usb_dp_pa12>;
+    pinctrl-names = "default";
+    status = "okay";
+};
+
+&usart2 {
+    pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
+    pinctrl-names = "default";
+    current-speed = <115200>;
+    status = "okay";
+};
+
+&usart6 {
+    pinctrl-0 = <&usart6_tx_pa4 &usart6_rx_pa5>;
+    pinctrl-names = "default";
+    current-speed = <115200>;
+    status = "okay";
+};
+
+&rtc {
+    clocks = <&rcc STM32_CLOCK_BUS_APB1 0x00000400>,
+         <&rcc STM32_SRC_LSI RTC_SEL(2)>;
+    status = "okay";
+};
+
+&iwdg {
+    status = "okay";
+};
+
+&die_temp {
+    status = "okay";
+};
+
+&can1 {
+    clocks = <&rcc STM32_CLOCK_BUS_APB1 0x00001000>,
+         <&rcc STM32_SRC_PLL_Q FDCAN_SEL(1)>;
+    pinctrl-0 = <&fdcan1_rx_pd0 &fdcan1_tx_pd1>;
+    pinctrl-names = "default";
+    bus-speed = <125000>;
+    bus-speed-data = <1000000>;
+    status = "okay";
+};
+
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        boot_partition: partition@0 {
+            label = "mcuboot";
+            reg = <0x00000000 DT_SIZE_K(48)>;
+            read-only;
+        };
+        slot0_partition: partition@C000 {
+            label = "image-0";
+            reg = <0x0000C000 DT_SIZE_K(200)>;
+        };
+        slot1_partition: partition@3E000 {
+            label = "image-1";
+            reg = <0x0003E000 DT_SIZE_K(200)>;
+        };
+        /* final 64KiB reserved for app storage partition */
+        storage_partition: partition@70000 {
+            label = "storage";
+            reg = <0x00070000 DT_SIZE_K(64)>;
+        };
+    };
+};
+
+&cpu0 {
+    cpu-power-states = <&stop0 &stop1>;
+};
+
+&lptim1 {
+    clocks = <&rcc STM32_CLOCK_BUS_APB1 0x80000000>,
+         <&rcc STM32_SRC_LSI LPTIM1_SEL(1)>;
+    status = "okay";
+};

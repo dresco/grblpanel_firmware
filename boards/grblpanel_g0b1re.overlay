@@ -1,0 +1,164 @@
+/*
+ * Copyright (c) 2020 Phytec Messtechnik GmbH
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+ #include <zephyr/dt-bindings/sensor/qdec_stm32.h>
+ //#include <zephyr/dt-bindings/clock/stm32g0_clock.h>
+ #include <dt-bindings/display/ili9xxx.h>
+
+ &dma1 {
+     status = "okay";
+ };
+
+ &dmamux1 {
+    status = "okay";
+};
+
+&can1 {
+    pinctrl-0 = <&fdcan1_rx_pd0 &fdcan1_tx_pd1>;
+    pinctrl-names = "default";
+    bus-speed = <125000>;
+    bus-speed-data = <125000>;
+    status = "okay";
+};
+
+// ModBus on USART2
+&usart2 {
+    modbus0 {
+        compatible = "zephyr,modbus-serial";
+        status = "okay";
+    };
+};
+
+// Keypad via ADP5589 IO expander on I2C1
+keypad: &i2c1 {
+    pinctrl-0 = <&i2c1_scl_pb8 &i2c1_sda_pb9>;
+    pinctrl-names = "default";
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_FAST>;
+};
+
+// ILI9488 display on SPI2
+&spi2 {
+    cs-gpios = <&gpiob 11 GPIO_ACTIVE_LOW>;
+
+    pinctrl-0 = <&spi2_sck_pb13 &spi2_miso_pb14 &spi2_mosi_pb15>;
+    pinctrl-names = "default";
+
+    dmas = <&dmamux1 0 19 0x28440>,
+    <&dmamux1 1 18 0x28480>;
+    dma-names = "tx", "rx";
+
+    ili9488: ili9488@0 {
+        compatible = "ilitek,ili9488";
+        spi-max-frequency = <24000000>;
+        reg = <0>;
+        cmd-data-gpios = <&gpiob 12 (GPIO_ACTIVE_LOW)>;
+        reset-gpios = <&gpiob 10 (GPIO_ACTIVE_LOW)>;
+        pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB888>;
+        height = <320>;
+        width = <480>;
+        rotation = <270>;
+        frmctr1 = [a0 11];
+        pwctrl1 = [17 15];
+        pwctrl2 = [41];
+        pgamctrl = [00 03 09 08 16 0a 3f 78 4c 09 0a 08 16 1a 0f];
+        ngamctrl = [00 16 19 03 0f 05 32 45 46 04 0e 0d 35 37 0f];
+    };
+
+    status = "okay";
+};
+
+// Timers for quadrature encoder inputs
+// note: using out of tree encoder driver
+//
+&timers1 {
+    status = "okay";
+
+    encoder1: encoder1 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pa9>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+&timers2 {
+    status = "okay";
+
+    encoder4: encoder4 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim2_ch1_pa0 &tim2_ch2_pa1>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+&timers3 {
+    status = "okay";
+
+    encoder3: encoder3 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim3_ch1_pa6 &tim3_ch2_pa7>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+&timers4 {
+    status = "okay";
+
+    encoder2: encoder2 {
+        status = "okay";
+        compatible = "st,stm32-encoder";
+        pinctrl-0 = <&tim4_ch1_pb6 &tim4_ch2_pb7>;
+        pinctrl-names = "default";
+        st,input-filter-level = <FDIV1_N2>;
+        //st,encoder-mode = <2>;
+        //st,max-counter-value = <32767>;
+        //st,input-polarity-inverted;
+    };
+};
+
+// PWM device for display backlight
+// https://medium.com/home-wireless/using-a-pwm-device-in-zephyr-7100d089f15c
+&timers14 {
+    st,prescaler = <10000>;
+    status = "okay";
+    pwm14: pwm {
+        status = "okay";
+        pinctrl-0 = <&tim14_ch1_pb1>;
+        pinctrl-names = "default";
+    };
+};
+/{
+    pwmdevs {
+        compatible = "pwm-leds";
+        pwm_dev0: pwm_dev_0 {
+            pwms=<&pwm14 1 2000 PWM_POLARITY_NORMAL>;
+        };
+    };
+};
+
+ 
+
+/ {
+    // note the zephyr lvgl libraries expect a 'chosen' display
+    chosen {
+        zephyr,display = &ili9488;
+    };
+};
