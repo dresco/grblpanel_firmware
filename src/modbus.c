@@ -1,5 +1,7 @@
 #include <main.h>
 
+#if PANEL_MODBUS
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
@@ -21,6 +23,7 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
         case IREG_DEBUG_2:
             break;
 
+#if PANEL_ENCODER
         case IREG_ENCODER_1:
             *reg = quadrature_get_value(1);
             break;
@@ -36,7 +39,9 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
         case IREG_ENCODER_4:
             *reg = quadrature_get_value(4);
             break;
+#endif // PANEL_ENCODER
 
+#if PANEL_KEYPAD
         case IREG_KEYPAD_1:
             *reg = keypad_get_value(1);
             break;
@@ -52,6 +57,7 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
         case IREG_KEYPAD_4:
             *reg = keypad_get_value(4);
             break;
+#endif // PANEL_KEYPAD
 
         case 110:
         case 111:
@@ -66,7 +72,9 @@ static int input_reg_rd(uint16_t addr, uint16_t *reg)
             return -ENOTSUP;
     }
 
+#if PANEL_KEYPAD
     keypad_reset_flags(); // allow queued events to be processed
+#endif
 
     return 0;
 }
@@ -109,8 +117,8 @@ static int holding_reg_wr(uint16_t addr, uint16_t reg)
             panel_displaydata.spindle_speed = reg;
             break;
 
-        case HREG_SPINDLE_POWER:
-            panel_displaydata.spindle_power = reg;
+        case HREG_SPINDLE_LOAD:
+            panel_displaydata.spindle_load = reg;
             break;
 
         case HREG_OVERRIDES_1:
@@ -188,7 +196,9 @@ const static struct modbus_iface_param server_param = {
 
 int modbus_init(void)
 {
-    const char iface_name[] = {DT_PROP(DT_INST(0, zephyr_modbus_serial), label)};
+#if (DT_NODE_EXISTS(MODBUS_NODE))
+
+    const char iface_name[] = {DEVICE_DT_NAME(MODBUS_NODE)};
     int iface;
 
     iface = modbus_iface_get_by_name(iface_name);
@@ -199,4 +209,11 @@ int modbus_init(void)
     }
 
     return modbus_init_server(iface, server_param);
+
+#else
+    LOG_ERR("Modbus node does not exist in device tree");
+    return 0;
+#endif
 }
+
+#endif // PANEL_MODBUS

@@ -5,6 +5,8 @@
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
+#ifdef KEYPAD_GPIO_MATRIX
+
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/sys/ring_buffer.h>
 
@@ -32,4 +34,6 @@ int8_t  matrix_init(void);
 int8_t  matrix_get_event_count(void);
 uint8_t matrix_get_events(uint8_t *, uint8_t);
 
-#endif
+#endif // KEYPAD_GPIO_MATRIX
+
+#endif  // __MATRIX_H__

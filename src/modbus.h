@@ -7,7 +7,13 @@
 
 #include <zephyr/modbus/modbus.h>
 
-#define BAUD_RATE       38400
+#define MODBUS_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(zephyr_modbus_serial)
+
+#if (DT_NODE_EXISTS(MODBUS_NODE))
+#define PANEL_MODBUS    1
+#endif
+
+#define BAUD_RATE       19200
 #define UNIT_ID         10
 
 // Input register definitions
@@ -26,7 +32,7 @@
 // Holding register definitions
 #define HREG_GRBL_STATE     100
 #define HREG_SPINDLE_SPEED  102
-#define HREG_SPINDLE_POWER  103
+#define HREG_SPINDLE_LOAD   103
 #define HREG_OVERRIDES_1    104
 #define HREG_OVERRIDES_2    105
 #define HREG_MPG_MODE       106

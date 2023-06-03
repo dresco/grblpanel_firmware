@@ -6,6 +6,6 @@
 if BOARD_GRBLPANEL_G0B1RE
 
 config BOARD
-	default "grblpanel_g0b1re"
+    default "grblpanel_g0b1re"
 
 endif # BOARD_GRBLPANEL_G0B1RE

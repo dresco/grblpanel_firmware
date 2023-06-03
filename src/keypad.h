@@ -20,7 +20,7 @@
 #define KEYPAD_6X11
 
 // Uncomment this to use a native GPIO keypad matrix (instead of i2c IO expander)
-#define KEYPAD_GPIO_MATRIX
+// #define KEYPAD_GPIO_MATRIX
 
 #include <keypad_4x4.h>
 #include <keypad_5x5.h>

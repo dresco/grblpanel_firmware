@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: Apache-2.0
 
 config BOARD_GRBLPANEL_G0B1RE
-	bool "grblPANEL G0B1RE Reference Board"
-	depends on SOC_STM32G0B1XX
+    bool "grblPANEL G0B1RE Reference Board"
+    depends on SOC_STM32G0B1XX

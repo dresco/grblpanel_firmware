@@ -1,6 +1,8 @@
 #include <main.h>
 #include <adp5589.h>
 
+#if PANEL_KEYPAD
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(panel, LOG_LEVEL_INF);
 
@@ -11,14 +13,14 @@ const struct gpio_dt_spec keyevent =
 #define KEYPAD_EVENT_INTERRUPT
 #endif
 
-const struct device *i2c_dev;
+const struct device *const i2c_dev = DEVICE_DT_GET(KEYPAD_NODE);
 
 int8_t adp5589_init(void)
 {
     uint8_t rc;
 
      // Set up I2C
-    i2c_dev = device_get_binding("KEYPAD");
+    //i2c_dev = device_get_binding("KEYPAD");
     if (i2c_dev == NULL)
     {
         LOG_ERR("Keypad devicetree binding not found");
@@ -31,7 +33,7 @@ int8_t adp5589_init(void)
 #endif
 
     // Configuration
-    uint32_t i2c_cfg = I2C_SPEED_SET(I2C_SPEED_STANDARD) | I2C_MODE_MASTER;
+    uint32_t i2c_cfg = I2C_SPEED_SET(I2C_SPEED_STANDARD) | I2C_MODE_CONTROLLER;
     if (i2c_configure(i2c_dev, i2c_cfg))
     {
         LOG_ERR("Keypad i2c config failed");
@@ -56,9 +58,9 @@ int8_t adp5589_init(void)
     adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_B, KEY_PINMAP(MIN(KEYPAD_COLS, 8)));
 
     // Add support for the maximum of 11 columns, the last three column bits are set in the C register
-    if (KEYPAD_COLS > 8) {
-        adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_C, KEY_PINMAP(MIN(KEYPAD_COLS-8, 3)));
-    }
+#if KEYPAD_COLS > 8
+    adp5589_set_register_value(ADP5589_ADR_PIN_CONFIG_C, KEY_PINMAP(MIN(KEYPAD_COLS-8, 3)));
+#endif
 #endif
 
 #ifdef KEYPAD_EVENT_INTERRUPT
@@ -124,3 +126,5 @@ int8_t adp5589_get_event_count(void)
     return ADP5589_STATUS_EC(adp5589_get_register_value(ADP5589_ADR_STATUS));
 #endif
 }
+
+#endif //PANEL_KEYPAD

@@ -1,10 +1,10 @@
 /*
 
-  registers.h - Modbus register definitions for control panel support
+  keypad_bitfields.h - Keypad bitfield definitions for control panel support
 
   Part of grblHAL
 
-  Copyright (c) 2021 Jon Escombe
+  Copyright (c) 2021-2022 Jon Escombe
 
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,16 +30,17 @@ typedef union {
                  reset                  :1,
                  unlock                 :1,
                  home                   :1,
+                 single_block           :1,
+                 spindle_off            :1,
+                 spindle_cw             :1,
+                 spindle_ccw            :1,
                  unused                 :1,
-                 function_f1            :1,
-                 function_f2            :1,
-                 function_f3            :1,
-                 function_f4            :1,
                  mpg_axis_x             :1,
                  mpg_axis_y             :1,
                  mpg_axis_z             :1,
                  mpg_axis_a             :1,
                  mpg_axis_b             :1;
+
     };
 } panel_keydata_1_t;
 
@@ -113,24 +114,3 @@ typedef union {
         uint16_t unused                 :16;
     };
 } panel_keydata_5_t;
-
-typedef union {
-    float   value;
-    uint8_t bytes[4];
-} float32_data_t;
-
-typedef struct {
-    uint16_t  grbl_state;
-    uint16_t  spindle_speed;
-    uint16_t  spindle_power;
-    uint8_t   spindle_override;
-    uint8_t   feed_override;
-    uint8_t   rapid_override;
-    uint8_t   wcs;
-    uint8_t   mpg_mode;
-    uint8_t   jog_mode;
-
-    float32_data_t x_pos;
-    float32_data_t y_pos;
-    float32_data_t z_pos;
-} panel_displaydata_t;

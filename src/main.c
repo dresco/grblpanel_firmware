@@ -8,6 +8,7 @@ panel_keydata_1_t   panel_keydata_1;
 panel_keydata_2_t   panel_keydata_2;
 panel_keydata_3_t   panel_keydata_3;
 panel_keydata_4_t   panel_keydata_4;
+panel_keydata_5_t   panel_keydata_5;
 panel_displaydata_t panel_displaydata;
 
 // mutex for accessing the global data structures
@@ -21,6 +22,8 @@ struct k_mutex paneldata_mutex;
 
 void main(void)
 {
+    //static uint16_t q, q1, q2, q3, q4; // temporary quadrature encoder values for debug output
+
     k_mutex_init(&paneldata_mutex);
 
 #ifdef PANEL_BACKLIGHT
@@ -33,34 +36,106 @@ void main(void)
 #endif
 
 #ifdef CONFIG_USB_CDC_ACM
-    // Enable USB CDC ACM device for console output
-    const struct device *dev_usb;
-    dev_usb = DEVICE_DT_GET_ONE(zephyr_cdc_acm_uart);
-    if (dev_usb == NULL || usb_enable(NULL)) {
+
+    // Enable USB CDC ACM device for shell output
+    const struct device *const dev_usb = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
+    uint32_t dtr = 0;
+
+    if (!device_is_ready(dev_usb)) {
+        LOG_ERR("CDC ACM device not ready");
         return;
     }
+
+    int ret = usb_enable(NULL);
+
+    if (ret != 0) {
+        LOG_ERR("Failed to enable USB");
+        return;
+    }
+
+    /* Poll if the DTR flag was set */
+    // LOG_ERR("USB device has been enabled, polling DTR...");
+    // while (!dtr) {
+    //     uart_line_ctrl_get(dev_usb, UART_LINE_CTRL_DTR, &dtr);
+    //     /* Give CPU resources to low priority threads. */
+    //     k_sleep(K_MSEC(100));
+    // }
+    // LOG_ERR("DTR ready...");
+
 #endif
 
-    LOG_INF("Hello World...! %s", CONFIG_BOARD);
+    LOG_INF("Hello World :) ...! %s", CONFIG_BOARD);
 
+
+#if PANEL_DISPLAY
     if (display_init()) {
         LOG_ERR("Error initialising display device.%s", "");
     }
+#endif
 
+#if PANEL_KEYPAD
     if (keypad_init()) {
         LOG_ERR("Error initialising keypad device.%s", "");
     }
+#endif
 
+#if PANEL_ENCODER
+    quadrature_init();
+#endif
+
+#if PANEL_MODBUS
     if (modbus_init()) {
         LOG_ERR("Modbus RTU server initialization failed.%s", "");
     }
+#endif
 
-    quadrature_init();
+#if PANEL_CANBUS
+    if (canbus_init()) {
+        LOG_ERR("CAN bus initialization failed.%s", "");
+    }
+#endif
 
     while (1) {
+
+#if PANEL_KEYPAD
         keypad_process_events();
-        update_values();
+#endif
+
+#if PANEL_DISPLAY
+        display_update_values();
         display_update();
+#endif
+
+// // testing
+// #if PANEL_KEYPAD
+//         keypad_reset_flags(); // allow queued events to be processed
+// #endif
+
+// // testing
+//         k_msleep(100);
+//         q = quadrature_get_value(1);
+//         if (q1 != q) {
+//             printk("Enc1: %u\n", q);
+//             q1 = q;
+//         }
+//         q = quadrature_get_value(2);
+//         if (q2 != q) {
+//             printk("Enc2: %u\n", q);
+//             q2 = q;
+//         }
+//         q = quadrature_get_value(3);
+//         if (q3 != q) {
+//             printk("Enc3: %u\n", q);
+//             q3 = q;
+//         }
+//         q = quadrature_get_value(4);
+//         if (q4 != q) {
+//             printk("Enc4: %u\n", q);
+//             q4 = q;
+//         }
+
+
+
         k_yield();
     }
 }

@@ -76,10 +76,13 @@ uint16_t keypad_get_value(uint8_t instance)
 
 int keypad_process_events(void)
 {
-    // todo: the keydata registers are polled over modbus, this interval is quite slow, and we can easily miss a keypress
+    // the keydata registers are polled over modbus, this interval is quite slow, and we can easily miss a keypress
     // if for instance a key is pressed and released before the next poll. We need to put only the first instance of a state
     // change (for any specific key) into the register data, and queue any subsequent states for further polling iterations
     // (we can't ignore the subsequent states or else the modbus master would not see the release event).
+    //
+    // note that this wouldn't be an issue for can bus, where events are sent immediately, but planning to keep the same code
+    // for consistency?
 
     uint8_t new_key_count, total_key_count = 0;
 
@@ -141,7 +144,7 @@ int keypad_process_events(void)
 
             if (test_bit(keydata_flags, key_code) == 0) {
                 // state has not already been updated for this key code, so update the modbus register
-                LOG_DBG("first event for key 0x%02X, update modbus registers", key_code);
+                LOG_DBG("first event for key 0x%02X, update panel keydata", key_code);
                 set_bit(keydata_flags, key_code);
 
                 switch (KEY_CODE(keydata)) {
@@ -282,20 +285,20 @@ int keypad_process_events(void)
                         panel_keydata_2.move_to_zero_a = KEY_PRESSED(keydata);
                         break;
 
-                    case KEY_FUNCTION_F1:
-                        panel_keydata_1.function_f1 = KEY_PRESSED(keydata);
+                    case KEY_SINGLE_BLOCK:
+                        panel_keydata_1.single_block = KEY_PRESSED(keydata);
                         break;
 
-                    case KEY_FUNCTION_F2:
-                        panel_keydata_1.function_f2 = KEY_PRESSED(keydata);
+                    case KEY_SPINDLE_OFF:
+                        panel_keydata_1.spindle_off = KEY_PRESSED(keydata);
                         break;
 
-                    case KEY_FUNCTION_F3:
-                        panel_keydata_1.function_f3 = KEY_PRESSED(keydata);
+                    case KEY_SPINDLE_CW:
+                        panel_keydata_1.spindle_cw = KEY_PRESSED(keydata);
                         break;
 
-                    case KEY_FUNCTION_F4:
-                        panel_keydata_1.function_f4 = KEY_PRESSED(keydata);
+                    case KEY_SPINDLE_CCW:
+                        panel_keydata_1.spindle_ccw = KEY_PRESSED(keydata);
                         break;
 
                     case KEY_FEED_RESET:

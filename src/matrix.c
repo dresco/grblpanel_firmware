@@ -172,4 +172,4 @@ void matrix_thread(void)
 K_THREAD_DEFINE(matrix_thread_id, STACKSIZE, matrix_thread,
                 NULL, NULL, NULL, PRIORITY, 0, 0);
 
-#endif
+#endif // KEYPAD_GPIO_MATRIX

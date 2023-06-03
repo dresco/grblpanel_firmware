@@ -181,4 +181,21 @@
 #define KEY_RESET2          141
 #endif
 
+#ifndef KEY_SINGLE_BLOCK
+#define KEY_SINGLE_BLOCK    142
+#endif
+
+#ifndef KEY_SPINDLE_CW
+#define KEY_SPINDLE_CW      143
+#endif
+
+#ifndef KEY_SPINDLE_OFF
+#define KEY_SPINDLE_OFF     144
+#endif
+
+#ifndef KEY_SPINDLE_CCW
+#define KEY_SPINDLE_CCW     145
+#endif
+
+
 #endif

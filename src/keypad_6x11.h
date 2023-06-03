@@ -13,9 +13,14 @@
 #define KEY_FEEDHOLD        22
 #define KEY_RESET1          33
 
+#define KEY_SINGLE_BLOCK    62
 #define KEY_HOME            63
 #define KEY_UNLOCK          64
 #define KEY_RESET2          65
+
+#define KEY_SPINDLE_CW      40
+#define KEY_SPINDLE_OFF     41
+#define KEY_SPINDLE_CCW     42
 
 #define KEY_JOG_X_P         14
 #define KEY_JOG_X_N         12
@@ -35,10 +40,8 @@
 #define KEY_MPG_AXIS_Z      20
 #define KEY_MPG_AXIS_A      21
 
-#define KEY_WCS_G54         40
-#define KEY_WCS_G55         41
-#define KEY_WCS_G56         42
-#define KEY_WCS_G57         43
+#define KEY_WCS_G54         49
+#define KEY_WCS_G55         60
 
 #define KEY_GOTO_ZERO_X     45
 #define KEY_GOTO_ZERO_Y     46

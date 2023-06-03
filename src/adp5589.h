@@ -8,6 +8,12 @@
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/gpio.h>
 
+#define KEYPAD_NODE DT_NODELABEL(keypad)
+
+#if (DT_NODE_EXISTS(KEYPAD_NODE))
+#define PANEL_KEYPAD    1
+#endif
+
 //
 // Function declarations
 //
