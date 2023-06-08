@@ -1,14 +1,35 @@
-Initial Zephyr implementation of a modbus RTU control panel for grblHAL  
-See accompanying plugin at https://github.com/dresco/Plugin_panel
+# grblPANEL Zephyr firmware
 
-**PoC development hardware**  
-ST Nucleo F446ZE  
-Analog Devices ADP5589 I2C IO Expander https://www.analog.com/en/products/adp5589.html  
-MSP3520 SPI TFT LCD display (ILI9488 driver) http://www.lcdwiki.com/3.5inch_SPI_Module_ILI9488_SKU:MSP3520  
+A Zephyr firmware implementation for the [grblPANEL](https://github.com/dresco/grblPANEL) control panel project. This firmware provides support for a custom STM32G0 based reference board, along with limited support for a number of STM32 Nucleo development boards.
 
-**Software stack**  
-This project is using Zephyr as the development framework, configured as a PlatformIO project for easy setup & IDE integration.
+## Software stack
 
-Zephyr provides native support for modbus and for the LVGL graphics library. However, it does not currently have driver support for STM32 timers in hardware quadrature encoder mode, or for the ADP5589 IO expander. The quadrature encoders are set up and accessed using the STM LL timer APIs, and a local driver has been implemented for the IO expander.
+This project uses [Zephyr](https://www.zephyrproject.org/) as the development framework.
 
-Using the **Bitstream Vera Sans Mono** TrueType font, converted for use with LVGL using https://lvgl.io/tools/fontconverter
+Zephyr was chosen  for it's portability between processors, and for the good built-in support for Modbus, CAN bus, and the LVGL graphics libraries. 
+
+Quadrature encoder support is provided by an out of tree driver, based on the upstream `st,stm32-qdec` sensor driver, but modified to access the necessary raw encoder values. (The sensor subsystem channel is mapped to degrees rotation in the upstream driver).
+
+Support for the ADP5589 I/O expander, and for GPIO matrix keyboard scanning (where used), has been added to the project as local low level drivers. Intention is to port these to the Zephyr driver model in due course.
+
+## Configuration
+
+The available peripherals and pin mappings for each target board are configured through per-board configuration files & devicetree overlays, in addition to the project wide configuration file (prj.conf).
+
+A custom board `grblpanel_g0b1re` has been defined for the [reference hardware implementation](https://github.com/dresco/grblpanel_main_board).
+
+## Build instructions
+
+The initial version was configured as a PlatformIO project for easy setup & IDE integration. However, due to limited support for later Zephyr versions, the project has since transitioned away from PlatformIO to a native Zephyr build. 
+
+At time of writing, this project is being built and tested with Zephyr v3.3
+
+*todo: include links for setting up a functional zephyr & west build environment*
+
+    west build -b grblpanel_g0b1re --pristine
+    west flash --runner openocd
+
+*todo: add support & instructions for flashing custom board over DFU*
+
+---
+Using the **Bitstream Vera Sans Mono** TrueType font for display output, converted for use with LVGL using https://lvgl.io/tools/fontconverter

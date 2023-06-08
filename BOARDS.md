@@ -1,4 +1,6 @@
-# Current pinouts for development boards
+# Historical pinouts for development boards
+
+**Warning - these pinouts may be outdated - please cross reference to the current devicetree overlays**
 
 ## Nucleo F411RE
 * PA0  - TIM5_CH1  - ENCODER_4
@@ -98,8 +100,3 @@
 * PD6  - USART2_RX - MODBUS
 * PD14 - GPIO_OUT  - DISPLAY_RESET
 * PD15 - GPIO_OUT  - DISPLAY_CMD/DATA
-
-Need LL support code for encoders, ifdef to support both boards...
-
-## Not yet connected
-Display backlight pwm via mosfet
